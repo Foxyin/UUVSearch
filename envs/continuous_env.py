@@ -114,11 +114,20 @@ class ContinuousSearchEnv(gym.Env):
             self.found = True
             reward = self.reward_weights["find_target"]
         else:
-            # 区分首次覆盖和重复访问
-            new_mask = (self.info_map.coverage - prev_coverage) > 0
-            revisit_mask = (self.info_map.coverage == 1) & (prev_coverage == 1)
-            new_count = np.sum(new_mask)
-            revisit_count = np.sum(revisit_mask)
+            # 区分首次覆盖和重复访问（仅统计 FOV 内格子）
+            new_count = 0
+            revisit_count = 0
+            seen = set()
+            for (r, c) in fov_cells:
+                if 0 <= r < self.map.size and 0 <= c < self.map.size:
+                    if (r, c) in seen:
+                        continue
+                    seen.add((r, c))
+                    if self.map.is_free(r, c):
+                        if prev_coverage[r, c] == 0 and self.info_map.coverage[r, c] == 1:
+                            new_count += 1
+                        elif prev_coverage[r, c] == 1:
+                            revisit_count += 1
 
             reward = (self.reward_weights.get("coverage_gain", 1.0) * new_count +
                       self.reward_weights.get("revisit_gain", 0.1) * revisit_count +

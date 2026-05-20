@@ -39,6 +39,8 @@ class GridEnv:
         # 保存初始网格状态（仅障碍物布局），用于 reset 恢复
         self.initial_grid = self.map.grid.copy()
 
+        self.np_random = np.random.RandomState()
+
         self.auv_pos = None
         self.target_pos = None
         self.step_count = 0
@@ -56,13 +58,13 @@ class GridEnv:
         free_cells = self.map.get_free_cells()
         if not free_cells:
             raise RuntimeError("地图无自由格子")
-        target_idx = np.random.choice(len(free_cells))
+        target_idx = self.np_random.choice(len(free_cells))
         self.target_pos = free_cells[target_idx]
         self.map.set_target(*self.target_pos)
 
         # 随机放置AUV（不与目标重合）
         while True:
-            start_idx = np.random.choice(len(free_cells))
+            start_idx = self.np_random.choice(len(free_cells))
             start_pos = free_cells[start_idx]
             if start_pos != self.target_pos:
                 break
@@ -101,6 +103,9 @@ class GridEnv:
         heading = self.ACTION_HEADING.get(action, 0)
         fov_cells = self.sonar.get_fov_cells(self.auv_pos, heading, self.map.grid)
         target_detected = self.target_pos in fov_cells
+
+        # 记录更新前的覆盖图，用于计算新增覆盖
+        prev_coverage = self.info_map.coverage.copy()
         self.info_map.update(fov_cells, target_detected)
 
         if target_detected:
@@ -109,7 +114,9 @@ class GridEnv:
         else:
             new_coverage = 0
             for (r, c) in fov_cells:
-                if self.map.grid[r, c] == 3:
+                if (0 <= r < self.map.size and 0 <= c < self.map.size
+                        and prev_coverage[r, c] == 0
+                        and self.info_map.coverage[r, c] == 1):
                     new_coverage += 1
             reward = new_coverage * 1.0
 

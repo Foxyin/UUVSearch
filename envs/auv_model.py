@@ -25,10 +25,11 @@ class AUVMotionModel:
         x, y, psi = state
         dpsi = np.deg2rad(action_dpsi_deg)
         dpsi = np.clip(dpsi, -self.max_dpsi, self.max_dpsi)
-        psi_new = psi + dpsi
-        # 角度归一化到 [-pi, pi]
-        psi_new = (psi_new + np.pi) % (2 * np.pi) - np.pi
 
-        dx = self.v * np.cos(psi_new) * self.dt
-        dy = self.v * np.sin(psi_new) * self.dt
+        # 以当前航向计算位移（航向变化发生在步末）
+        dx = self.v * np.cos(psi) * self.dt
+        dy = self.v * np.sin(psi) * self.dt
+
+        psi_new = psi + dpsi
+        psi_new = (psi_new + np.pi) % (2 * np.pi) - np.pi
         return np.array([x + dx, y + dy, psi_new])
