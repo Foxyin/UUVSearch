@@ -1,8 +1,9 @@
 """
-UUVSearch - 统一实验入口脚本（修复版）
+UUVSearch - 统一实验入口脚本
 用法:
   python scripts/run_experiment.py --env grid --algo lawnmower --episodes 5 --render
-  python scripts/run_experiment.py --env continuous --algo random --episodes 3 --render
+  python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 5 --render
+  python scripts/run_experiment.py --env continuous --algo random --episodes 10
 """
 import sys
 import os
@@ -18,7 +19,6 @@ from algorithms import create_algorithm
 
 
 def run_episode(env, algo, max_steps=500, render=False, env_type='grid'):
-    """运行一个回合，返回 (final_obs_or_dict, total_reward, found)"""
     reset_output = env.reset()
     if env_type == 'continuous':
         obs, info = reset_output
@@ -52,7 +52,6 @@ def run_episode(env, algo, max_steps=500, render=False, env_type='grid'):
 
         obs = next_obs
         if done:
-            # 如果是因为发现目标而终止
             if env_type == 'continuous' and env.found:
                 found = True
             elif env_type == 'grid' and obs.get('target_found', False):
@@ -66,16 +65,11 @@ def main():
     parser.add_argument("--env", type=str, required=True, choices=["grid", "continuous"],
                         help="环境类型")
     parser.add_argument("--algo", type=str, required=True, choices=["random", "lawnmower"],
-                        help="算法名称 (目前连续环境仅支持 random)")
+                        help="算法名称")
     parser.add_argument("--episodes", type=int, default=5, help="运行回合数")
     parser.add_argument("--render", action="store_true", help="打印每步信息")
     parser.add_argument("--config", type=str, default=None, help="额外配置文件（可选）")
     args = parser.parse_args()
-
-    # 兼容性检查
-    if args.env == "continuous" and args.algo != "random":
-        print("错误：连续环境目前仅支持 random 算法（传统算法依赖网格观测）。")
-        sys.exit(1)
 
     # 加载配置
     base_config_path = os.path.join(os.path.dirname(__file__), "..", "config", "env", f"{args.env}_square.yaml")
@@ -84,24 +78,22 @@ def main():
         config_paths.append(args.config)
     config = load_config(*config_paths)
 
-    # 创建地图
     map_obj = create_map(config["map"]["type"], config["map"])
-
-    # 创建环境
     env = create_environment(args.env, map_obj, config)
 
-    # 创建算法（传入动作数量）
+    # 创建算法
     algo_config = {}
     if args.algo == "random":
-        if args.env == "continuous":
-            algo_config["num_actions"] = 5
-        else:
-            algo_config["num_actions"] = 8
+        algo_config["num_actions"] = 5 if args.env == "continuous" else 8
     elif args.algo == "lawnmower":
         algo_config["map_obj"] = map_obj
+        if args.env == "continuous":
+            algo_config["resolution"] = config["map"]["resolution"]
+            algo_config["map_length"] = config["map"]["length"]
+            algo_config["action_angles"] = [-90, -45, 0, 45, 90]
+
     algo = create_algorithm(args.algo, algo_config)
 
-    # 运行回合
     success_count = 0
     total_steps = 0
     for ep in range(args.episodes):
