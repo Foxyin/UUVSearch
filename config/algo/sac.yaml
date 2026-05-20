@@ -1,0 +1,13 @@
+# UUVSearch - SAC 超参数
+hidden_dim: 128
+gamma: 0.99
+tau: 0.005
+lr_actor: 1e-4
+lr_critic: 1e-4
+lr_alpha: 3e-4
+alpha: 0.2
+auto_alpha: true
+target_entropy_scale: 1.0
+buffer_size: 100000
+batch_size: 64
+learn_start: 1000

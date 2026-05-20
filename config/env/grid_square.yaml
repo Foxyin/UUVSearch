@@ -1,0 +1,18 @@
+# UUVSearch - 里程碑3：正方形网格环境配置（含声纳）
+map:
+  type: "square"
+  grid_size: 20
+  resolution: 30.0
+  obstacle_ratio: 0.1
+
+info_map:
+  growth_factor: 50
+  kappa_max: 1.0
+
+sonar:
+  type: "circle" # "circle" 或 "sector"
+  max_range: 5 # 探测半径（网格数）
+  sector_angle: 120 # 扇形角度（仅sector模式使用）
+
+simulation:
+  max_steps: 500

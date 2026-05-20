@@ -1,0 +1,28 @@
+# UUVSearch 依赖 (基于 conda 环境 UUVSearch 精确版本)
+# 安装: pip install -r requirements.txt
+#
+# 注意: 此项目当前运行于 Python 3.8.20 (conda 环境 UUVSearch)
+# Python 3.8 已于 2024-10 停止维护，建议升级至 3.10+
+
+# 核心计算
+numpy==1.24.4
+torch==2.4.1
+
+# 环境与仿真
+gymnasium==1.1.1
+shapely==2.0.7
+
+# 可视化
+matplotlib==3.7.5
+
+# 配置与日志
+pyyaml==6.0.3
+tensorboard==2.14.0
+protobuf==5.29.6          # tensorboard 依赖，必须显式固定版本
+
+# 数据处理
+pandas==2.0.3
+
+# 间接依赖 (为确保可复现性显式固定)
+absl-py==2.3.1
+grpcio==1.70.0
