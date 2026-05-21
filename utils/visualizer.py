@@ -31,7 +31,7 @@ def plot_trajectory(x, y, target_x, target_y, title="Trajectory", save_path=None
 def plot_uncertainty_heatmap(matrix, title="Uncertainty Map", save_path=None):
     """绘制不确定度热力图"""
     plt.figure(figsize=(7, 6))
-    im = plt.imshow(matrix.T, origin='lower', cmap='hot', interpolation='nearest')
+    im = plt.imshow(matrix, origin='upper', cmap='hot', interpolation='nearest')
     plt.colorbar(im, label='Uncertainty')
     plt.title(title)
     plt.xlabel('Grid X')
@@ -46,7 +46,7 @@ def plot_uncertainty_heatmap(matrix, title="Uncertainty Map", save_path=None):
 def plot_probability_heatmap(matrix, title="Probability Map", save_path=None):
     """绘制目标存在概率热力图"""
     plt.figure(figsize=(7, 6))
-    im = plt.imshow(matrix.T, origin='lower', cmap='viridis', interpolation='nearest')
+    im = plt.imshow(matrix, origin='upper', cmap='viridis', interpolation='nearest')
     plt.colorbar(im, label='Probability')
     plt.title(title)
     plt.xlabel('Grid X')

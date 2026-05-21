@@ -1,12 +1,16 @@
 """
-UUVSearch - 网格搜索环境（里程碑3：集成声纳模型 + 修复地图重置）
+UUVSearch - 网格搜索环境（Gymnasium 接口）
 """
 import numpy as np
+import gymnasium as gym
+from gymnasium import spaces
 from .info_map import InfoMap
 from .sonar_model import SonarModel
 
 
-class GridEnv:
+class GridEnv(gym.Env):
+    metadata = {"render_modes": ["human"]}
+
     ACTIONS = {
         0: (-1, 0),    # 上
         1: (1, 0),     # 下
@@ -29,15 +33,27 @@ class GridEnv:
         7: 45    # 右下
     }
 
-    def __init__(self, map_obj, config: dict):
+    def __init__(self, map_obj, config: dict, render_mode=None):
+        super().__init__()
         self.map = map_obj
         self.cfg = config
+        self.render_mode = render_mode
         self.info_map = InfoMap(map_obj, config.get("info_map", {}))
         self.sonar = SonarModel(config.get("sonar", {}))
         self.max_steps = config.get("simulation", {}).get("max_steps", 500)
 
-        # 保存初始网格状态（仅障碍物布局），用于 reset 恢复
         self.initial_grid = self.map.grid.copy()
+
+        self.action_space = spaces.Discrete(8)
+        # Dict 观测（传统算法需要各字段）
+        self.observation_space = spaces.Dict({
+            "auv_pos": spaces.Tuple((spaces.Discrete(map_obj.size), spaces.Discrete(map_obj.size))),
+            "target_found": spaces.Discrete(2),
+            "step": spaces.Discrete(self.max_steps + 1),
+            "coverage": spaces.Box(0, 1, shape=()),
+            "max_prob": spaces.Box(0, 1, shape=()),
+            "hotspot": spaces.Tuple((spaces.Discrete(map_obj.size), spaces.Discrete(map_obj.size))),
+        })
 
         self.np_random = np.random.RandomState()
 
@@ -47,14 +63,12 @@ class GridEnv:
         self.found = False
         self.last_action = 3
 
-    def reset(self):
-        # 恢复地图到初始状态（清除标记的已访问和目标）
-        self.map.grid = self.initial_grid.copy()
+    def reset(self, seed=None, options=None):
+        super().reset(seed=seed)
 
-        # 重置信息图
+        self.map.grid = self.initial_grid.copy()
         self.info_map = InfoMap(self.map, self.cfg.get("info_map", {}))
 
-        # 随机放置目标
         free_cells = self.map.get_free_cells()
         if not free_cells:
             raise RuntimeError("地图无自由格子")
@@ -62,7 +76,6 @@ class GridEnv:
         self.target_pos = free_cells[target_idx]
         self.map.set_target(*self.target_pos)
 
-        # 随机放置AUV（不与目标重合）
         while True:
             start_idx = self.np_random.choice(len(free_cells))
             start_pos = free_cells[start_idx]
@@ -74,14 +87,14 @@ class GridEnv:
         self.found = False
         self.last_action = 3
 
-        return self._get_obs()
+        return self._get_obs(), {}
 
     def _get_obs(self):
         r, c = self.auv_pos
         stats = self.info_map.get_stats()
         return {
             "auv_pos": (r, c),
-            "target_found": self.found,
+            "target_found": int(self.found),
             "step": self.step_count,
             "coverage": stats["coverage_ratio"],
             "max_prob": stats["max_probability"],
@@ -90,7 +103,7 @@ class GridEnv:
 
     def step(self, action: int):
         if self.found:
-            return self._get_obs(), 0.0, True, {"msg": "already found"}
+            return self._get_obs(), 0.0, True, False, {"msg": "already found"}
 
         self.last_action = action
 
@@ -104,7 +117,6 @@ class GridEnv:
         fov_cells = self.sonar.get_fov_cells(self.auv_pos, heading, self.map.grid)
         target_detected = self.target_pos in fov_cells
 
-        # 记录更新前的覆盖图，用于计算新增覆盖
         prev_coverage = self.info_map.coverage.copy()
         self.info_map.update(fov_cells, target_detected)
 
@@ -121,5 +133,9 @@ class GridEnv:
             reward = new_coverage * 1.0
 
         self.step_count += 1
-        done = self.found or (self.step_count >= self.max_steps)
-        return self._get_obs(), reward, done, {"detected": target_detected}
+        terminated = self.found
+        truncated = self.step_count >= self.max_steps
+        return self._get_obs(), reward, terminated, truncated, {"detected": target_detected}
+
+    def render(self):
+        pass

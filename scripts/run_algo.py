@@ -1,5 +1,5 @@
 """
-UUVSearch - 里程碑2：算法测试脚本（修复版）
+UUVSearch - 传统算法测试脚本（网格环境）
 用法: python scripts/run_algo.py --algo random|lawnmower [--episodes N]
 """
 import sys
@@ -16,47 +16,41 @@ from algorithms import create_algorithm
 
 
 def run_episode(env, algo, max_steps=500, render=False):
-    obs = env.reset()
+    obs, info = env.reset()
     algo.reset()
     total_reward = 0.0
     for step in range(max_steps):
         action = algo.select_action(obs)
-        obs, reward, done, info = env.step(action)
+        obs, reward, terminated, truncated, info = env.step(action)
         total_reward += reward
         if render:
             print(f"Step {obs['step']}: pos={obs['auv_pos']}, cov={obs['coverage']:.3f}, "
                   f"prob={obs['max_prob']:.4f}, reward={reward:.1f}")
-        if done:
+        if terminated or truncated:
             break
     return obs, total_reward
 
 
 def main():
-    parser = argparse.ArgumentParser(description="UUVSearch 算法测试")
+    parser = argparse.ArgumentParser(description="UUVSearch 传统算法测试")
     parser.add_argument("--algo", type=str, required=True, choices=["random", "lawnmower"],
                         help="选择算法")
     parser.add_argument("--episodes", type=int, default=5, help="运行回合数")
     parser.add_argument("--render", action="store_true", help="打印每步信息")
     args = parser.parse_args()
 
-    # 加载配置
     config_path = os.path.join(os.path.dirname(__file__), "..", "config", "env", "grid_square.yaml")
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
 
-    # 创建地图
     map_obj = create_map(config["map"]["type"], config["map"])
-
-    # 创建环境
     env = GridEnv(map_obj, config)
 
-    # 创建算法
     algo_config = {}
     if args.algo == "lawnmower":
-        algo_config["map_obj"] = map_obj   # 直接传入地图对象
+        algo_config["map_obj"] = map_obj
     algo = create_algorithm(args.algo, algo_config)
 
-    # 运行多个回合
     success_count = 0
     total_steps = 0
     for ep in range(args.episodes):

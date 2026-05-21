@@ -1,8 +1,7 @@
-"""
-UUVSearch - 经验回放缓冲区
-"""
+"""经验回放缓冲区（DQN/SAC 共用）"""
 import random
 import numpy as np
+
 
 class ReplayBuffer:
     def __init__(self, capacity=100000):

@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from .network import QNetwork
-from .replay_buffer import ReplayBuffer
+from utils.replay_buffer import ReplayBuffer
 
 class DQNAgent:
     def __init__(self, obs_dim, action_dim, config):
@@ -79,7 +79,7 @@ class DQNAgent:
         }, path)
 
     def load(self, path):
-        checkpoint = torch.load(path, map_location=self.device)
+        checkpoint = torch.load(path, map_location=self.device, weights_only=True)
         self.q_net.load_state_dict(checkpoint['q_net'])
         self.target_net.load_state_dict(checkpoint['target_net'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])

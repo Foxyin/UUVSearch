@@ -26,6 +26,7 @@ class DQNTrainer:
         episode_reward = 0
         episode_len = 0
         episode_count = 0
+        recent_success = []  # 最近 N 回合的成功记录
 
         for step in range(self.total_steps):
             action = self.agent.select_action(obs)
@@ -41,8 +42,14 @@ class DQNTrainer:
 
             if done:
                 episode_count += 1
+                success = int(terminated)  # terminated = 找到目标
+                recent_success.append(success)
+                if len(recent_success) > 100:
+                    recent_success.pop(0)
+
                 self.logger.log_scalar("train/episode_reward", episode_reward, step)
                 self.logger.log_scalar("train/episode_length", episode_len, step)
+                self.logger.log_scalar("train/success_rate", np.mean(recent_success), step)
                 if loss_info:
                     self.logger.log_scalar("train/loss", loss_info["loss"], step)
                     self.logger.log_scalar("train/epsilon", loss_info["epsilon"], step)

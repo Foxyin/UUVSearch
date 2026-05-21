@@ -4,7 +4,7 @@ gamma: 0.99
 lr: 1e-4
 epsilon_start: 1.0
 epsilon_min: 0.05
-epsilon_decay: 0.995
+epsilon_decay: 0.9995  # ~6000 步衰减到底，比 0.995 (~600 步) 合理
 buffer_size: 100000
 batch_size: 64
 learn_start: 1000

@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from .network import Actor, Critic
-from .replay_buffer import ReplayBuffer
+from utils.replay_buffer import ReplayBuffer
 
 class SACAgent:
     def __init__(self, obs_dim, action_dim, config):
@@ -103,9 +103,10 @@ class SACAgent:
         actor_loss.backward()
         self.actor_optimizer.step()
 
-        # 自动调整 alpha
+        # 自动调整 alpha（基于策略熵与目标熵的差距）
         if self.auto_alpha:
-            alpha_loss = -(self.log_alpha * (log_probs + self.target_entropy).detach()).mean()
+            policy_entropy = -(probs * log_probs).sum(dim=1).mean()  # H(π) = -E[log π]
+            alpha_loss = self.log_alpha * (policy_entropy.detach() - self.target_entropy)
             self.alpha_optimizer.zero_grad()
             alpha_loss.backward()
             self.alpha_optimizer.step()
@@ -141,7 +142,7 @@ class SACAgent:
         }, path)
 
     def load(self, path):
-        checkpoint = torch.load(path, map_location=self.device)
+        checkpoint = torch.load(path, map_location=self.device, weights_only=True)
         self.actor.load_state_dict(checkpoint['actor'])
         self.critic1.load_state_dict(checkpoint['critic1'])
         self.critic2.load_state_dict(checkpoint['critic2'])
