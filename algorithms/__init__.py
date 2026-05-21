@@ -4,11 +4,12 @@ UUVSearch - 算法模块工厂
 from .base_algo import BaseAlgorithm
 from .random_search import RandomSearch
 from .lawnmower import LawnmowerSearch
+from .greedy_prob import GreedyProbSearch
 
 _ALGO_REGISTRY = {
     "random": RandomSearch,
     "lawnmower": LawnmowerSearch,
-    # 未来添加: "dqn", "sac" 等
+    "greedy_prob": GreedyProbSearch,
 }
 
 def create_algorithm(algo_name: str, config: dict = None) -> BaseAlgorithm:

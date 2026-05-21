@@ -26,6 +26,7 @@ class InfoMap:
         self.probability[mask] = 1.0 / np.sum(mask)
 
         self.growth_factor = config.get("growth_factor", 50)
+        self.uncertainty_decay = config.get("uncertainty_decay", 0.99)  # 每步恢复因子
         self._update_counter = 0
 
     def update(self, fov_cells, target_detected: bool):
@@ -43,11 +44,15 @@ class InfoMap:
             if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
                 if self.map.is_free(r, c):  # 障碍物不标记
                     self.coverage[r, c] = 1.0
-                    self.uncertainty[r, c] = 0.0
                     self.map.mark_visited(r, c)  # 同步更新地图的已访问标记
 
-        # 2. 更新不确定图（简化版：仅被探测过的归零，其他保持不变）
-        #    论文中有随时间增长逻辑，这里暂时不做增长，保持简单。
+        # 2. 更新不确定图：FOV 内归零
+        for (r, c) in fov_cells:
+            if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
+                if self.map.is_free(r, c):
+                    self.uncertainty[r, c] = 0.0
+        # 非 FOV 区域的不确定度随时间恢复（遗忘因子）
+        self.uncertainty = np.minimum(self.kappa_max, self.uncertainty / self.uncertainty_decay)
 
         # 3. 贝叶斯更新目标概率（极度简化）
         #    如果探测到目标：FOV内格子概率倍增，FOV外略降

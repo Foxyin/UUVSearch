@@ -33,7 +33,8 @@ def run_episode(env, algo, max_steps=500, render=False):
 
 def main():
     parser = argparse.ArgumentParser(description="UUVSearch 传统算法测试")
-    parser.add_argument("--algo", type=str, required=True, choices=["random", "lawnmower"],
+    parser.add_argument("--algo", type=str, required=True,
+                        choices=["random", "lawnmower", "greedy_prob"],
                         help="选择算法")
     parser.add_argument("--episodes", type=int, default=5, help="运行回合数")
     parser.add_argument("--render", action="store_true", help="打印每步信息")
@@ -47,7 +48,7 @@ def main():
     env = GridEnv(map_obj, config)
 
     algo_config = {}
-    if args.algo == "lawnmower":
+    if args.algo in ("lawnmower", "greedy_prob"):
         algo_config["map_obj"] = map_obj
     algo = create_algorithm(args.algo, algo_config)
 

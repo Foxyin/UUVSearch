@@ -10,6 +10,13 @@ class SonarModel:
         self.type = config.get("type", "circle")
         self.max_range = config.get("max_range", 5)
         self.sector_angle = config.get("sector_angle", 120)  # 度
+        self.attenuation = config.get("attenuation", 0.3)  # 距离衰减系数
+
+    def get_detection_probability(self, distance: float) -> float:
+        """距离相关的检测概率 P(detect | target present at distance)"""
+        if distance > self.max_range:
+            return 0.0
+        return max(0.0, 1.0 - self.attenuation * distance / self.max_range)
 
     def get_fov_cells(self, auv_pos: tuple, heading_deg: float,
                       grid: np.ndarray) -> list:

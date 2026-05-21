@@ -27,8 +27,9 @@ auv:
 
 sonar:
   type: "circle"
-  max_range: 5
+  max_range: 3          # 缩小声呐范围，增加搜索难度
   sector_angle: 120
+  attenuation: 0.3      # 距离衰减系数，配合贝叶斯更新
 
 info_map:
   kappa_max: 1.0

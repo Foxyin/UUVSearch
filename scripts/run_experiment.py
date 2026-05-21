@@ -51,7 +51,8 @@ def main():
     parser = argparse.ArgumentParser(description="UUVSearch 统一实验运行器")
     parser.add_argument("--env", type=str, required=True, choices=["grid", "continuous"],
                         help="环境类型")
-    parser.add_argument("--algo", type=str, required=True, choices=["random", "lawnmower"],
+    parser.add_argument("--algo", type=str, required=True,
+                        choices=["random", "lawnmower", "greedy_prob"],
                         help="算法名称")
     parser.add_argument("--episodes", type=int, default=5, help="运行回合数")
     parser.add_argument("--seed", type=int, default=None,
@@ -70,9 +71,9 @@ def main():
     env = create_environment(args.env, map_obj, config)
 
     algo_config = {}
-    if args.algo == "random":
+    if args.algo in ("random", "greedy_prob"):
         algo_config["num_actions"] = 5 if args.env == "continuous" else 8
-    elif args.algo == "lawnmower":
+    if args.algo in ("lawnmower", "greedy_prob"):
         algo_config["map_obj"] = map_obj
         if args.env == "continuous":
             algo_config["resolution"] = config["map"]["resolution"]
