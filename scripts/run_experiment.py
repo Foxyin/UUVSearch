@@ -18,8 +18,11 @@ from envs import create_environment
 from algorithms import create_algorithm
 
 
-def run_episode(env, algo, max_steps=500, render=False):
-    obs, info = env.reset()
+def run_episode(env, algo, max_steps=500, render=False, seed=None):
+    if seed is not None:
+        obs, info = env.reset(seed=seed)
+    else:
+        obs, info = env.reset()
     if hasattr(algo, 'reset'):
         algo.reset()
 
@@ -51,6 +54,8 @@ def main():
     parser.add_argument("--algo", type=str, required=True, choices=["random", "lawnmower"],
                         help="算法名称")
     parser.add_argument("--episodes", type=int, default=5, help="运行回合数")
+    parser.add_argument("--seed", type=int, default=None,
+                        help="随机种子（固定后结果可复现，与 evaluate.py 行为一致）")
     parser.add_argument("--render", action="store_true", help="打印每步信息")
     parser.add_argument("--config", type=str, default=None, help="额外配置文件（可选）")
     args = parser.parse_args()
@@ -79,9 +84,11 @@ def main():
     success_count = 0
     total_steps = 0
     for ep in range(args.episodes):
+        ep_seed = (args.seed + ep) if args.seed is not None else None
         total_reward, found = run_episode(env, algo,
                                           max_steps=config["simulation"]["max_steps"],
-                                          render=args.render)
+                                          render=args.render,
+                                          seed=ep_seed)
         if found:
             success_count += 1
 

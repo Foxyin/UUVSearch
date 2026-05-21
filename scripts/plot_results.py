@@ -16,21 +16,37 @@ def main():
     args = parser.parse_args()
 
     df = pd.read_csv(args.csv)
-    metrics = ["success_rate", "avg_steps", "avg_coverage"]
+
+    # 检测是否有 _mean/_std 列（多次运行模式）
+    has_std = "success_rate_std" in df.columns
+
+    if has_std:
+        metric_pairs = [
+            ("success_rate_mean", "success_rate_std"),
+            ("avg_steps_mean", "avg_steps_std"),
+            ("avg_coverage_mean", "avg_coverage_std"),
+        ]
+    else:
+        metric_pairs = [
+            ("success_rate", None),
+            ("avg_steps", None),
+            ("avg_coverage", None),
+        ]
     titles = ["Success Rate", "Average Steps", "Average Coverage"]
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-    for i, metric in enumerate(metrics):
+    for i, (mean_col, std_col) in enumerate(metric_pairs):
         ax = axes[i]
-        values = df[metric].values
+        values = df[mean_col].values
+        errors = df[std_col].values if std_col else None
         labels = df["experiment"].values
         colors = plt.cm.Set2(np.linspace(0, 1, len(labels)))
-        bars = ax.bar(labels, values, color=colors)
+        bars = ax.bar(labels, values, yerr=errors, capsize=5, color=colors)
         ax.set_title(titles[i])
         ax.set_ylabel(titles[i])
-        # 在柱子上方标数值
         for bar, v in zip(bars, values):
-            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, f"{v:.2f}",
+            offset = (errors[list(bars).index(bar)] if errors is not None else 0) + 0.02
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + offset, f"{v:.2f}",
                     ha='center', va='bottom', fontsize=9)
 
     plt.tight_layout()

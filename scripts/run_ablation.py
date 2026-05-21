@@ -1,8 +1,11 @@
 """
-UUVSearch - 消融实验批量运行脚本（支持多算法）
+UUVSearch - 消融实验批量运行脚本（支持多次重复 + 标准差）
 用法:
-  python scripts/run_ablation.py --algo sac --total-steps 15000 --episodes 50
-  python scripts/run_ablation.py --algo dqn --total-steps 10000 --episodes 50
+  # 单次运行
+  python scripts/run_ablation.py --algo sac --total-steps 100000 --episodes 50
+
+  # 多次运行（5 次不同 seed，输出 mean ± std）
+  python scripts/run_ablation.py --algo sac --total-steps 100000 --episodes 50 --repeat 5
 """
 import sys
 import os
@@ -22,7 +25,6 @@ from trainers.dqn_trainer import DQNTrainer
 from trainers.evaluator import Evaluator
 
 
-# 奖励消融分组（通用）
 ABLATION_GROUPS = {
     "full": {
         "coverage_gain": 1.0,
@@ -55,33 +57,26 @@ ABLATION_GROUPS = {
 }
 
 
-def run_experiment(name, rewards, algo_name, total_steps, eval_episodes):
-    # 加载环境配置
+def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
     env_config = load_config("config/env/continuous_square.yaml")
-
-    # 加载算法配置
     algo_config = load_config(f"config/algo/{algo_name}.yaml")
 
-    # 覆盖奖励参数
     env_config["rewards"] = rewards
-    env_config["simulation"]["max_steps"] = 200  # 训练时每回合最大步数
+    env_config["simulation"]["max_steps"] = 200
 
-    # 合并总配置
     full_config = {**env_config, "algo": algo_config, "simulation": env_config["simulation"]}
     full_config["total_steps"] = total_steps
-    full_config["save_freq"] = total_steps  # 结束时保存一次
+    full_config["save_freq"] = total_steps
 
-    exp_name = f"ablation_{algo_name}_{name}"
+    exp_name = f"ablation_{algo_name}_{name}_seed{seed}"
     print(f"\n{'='*50}")
-    print(f"开始实验: {exp_name}  (算法: {algo_name}, 奖励组: {name})")
+    print(f"实验: {exp_name}  (算法: {algo_name}, 奖励组: {name}, seed: {seed})")
     print(f"奖励配置: {rewards}")
     print(f"{'='*50}")
 
-    # 创建地图和环境
     map_obj = create_map(env_config["map"]["type"], env_config["map"])
     env = ContinuousSearchEnv(map_obj, env_config)
 
-    # 根据算法名选择训练器
     if algo_name == "sac":
         trainer = SACTrainer(env, full_config, exp_name=exp_name)
     elif algo_name == "dqn":
@@ -91,13 +86,11 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes):
 
     trainer.train()
 
-    # 加载最终 checkpoint
     checkpoint_dir = f"experiments/checkpoints/{exp_name}"
     final_ckpt = os.path.join(checkpoint_dir, f"step_{total_steps}.pt")
     if not os.path.exists(final_ckpt):
         raise RuntimeError(f"checkpoint 未生成: {final_ckpt}")
 
-    # 创建评估环境与 Agent
     eval_env = ContinuousSearchEnv(map_obj, env_config)
     obs_dim = eval_env.observation_space.shape[0]
     action_dim = eval_env.action_space.n
@@ -118,6 +111,7 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes):
         "experiment": f"{algo_name}_{name}",
         "algo": algo_name,
         "reward_group": name,
+        "seed": seed,
         "success_rate": stats["success_rate"],
         "avg_steps": stats["avg_steps"],
         "avg_coverage": stats["avg_coverage"]
@@ -128,19 +122,55 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--algo", type=str, default="sac", choices=["sac", "dqn"],
                         help="选择算法 (sac 或 dqn)")
-    parser.add_argument("--total-steps", type=int, default=15000)
-    parser.add_argument("--episodes", type=int, default=50)
+    parser.add_argument("--total-steps", type=int, default=100000,
+                        help="每次训练的总步数（应与主实验一致）")
+    parser.add_argument("--episodes", type=int, default=50,
+                        help="评估回合数")
+    parser.add_argument("--repeat", type=int, default=1,
+                        help="每组实验重复次数（用于计算 mean ± std）")
+    parser.add_argument("--base-seed", type=int, default=42,
+                        help="基准随机种子（第 i 次重复使用 base_seed + i）")
     args = parser.parse_args()
 
-    results = []
+    all_runs = []
     for name, rewards in ABLATION_GROUPS.items():
-        try:
-            res = run_experiment(name, rewards, args.algo, args.total_steps, args.episodes)
-            results.append(res)
-        except Exception as e:
-            print(f"实验 {args.algo}_{name} 失败: {e}")
+        group_runs = []
+        for r in range(args.repeat):
+            seed = args.base_seed + r
+            try:
+                res = run_experiment(name, rewards, args.algo, args.total_steps, args.episodes, seed)
+                group_runs.append(res)
+            except Exception as e:
+                print(f"实验 {args.algo}_{name} (seed={seed}) 失败: {e}")
 
-    df = pd.DataFrame(results)
+        if not group_runs:
+            continue
+
+        if args.repeat == 1:
+            all_runs.append(group_runs[0])
+        else:
+            # 汇总多次运行的 mean ± std
+            sr = [r["success_rate"] for r in group_runs]
+            st = [r["avg_steps"] for r in group_runs]
+            cv = [r["avg_coverage"] for r in group_runs]
+            aggregated = {
+                "experiment": f"{args.algo}_{name}",
+                "algo": args.algo,
+                "reward_group": name,
+                "repeats": args.repeat,
+                "success_rate_mean": np.mean(sr),
+                "success_rate_std": np.std(sr),
+                "avg_steps_mean": np.mean(st),
+                "avg_steps_std": np.std(st),
+                "avg_coverage_mean": np.mean(cv),
+                "avg_coverage_std": np.std(cv),
+            }
+            all_runs.append(aggregated)
+            print(f"  {name}: sr={np.mean(sr):.3f}±{np.std(sr):.3f}, "
+                  f"steps={np.mean(st):.0f}±{np.std(st):.0f}, "
+                  f"cov={np.mean(cv):.3f}±{np.std(cv):.3f}")
+
+    df = pd.DataFrame(all_runs)
     output_dir = "experiments/ablation"
     os.makedirs(output_dir, exist_ok=True)
     csv_path = os.path.join(output_dir, f"results_{args.algo}.csv")

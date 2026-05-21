@@ -34,7 +34,9 @@ class ContinuousSearchEnv(gym.Env):
         patch_radius = config.get("obs_patch_radius", 5)
         patch_size = 2 * patch_radius + 1
         obs_dim = 3 * patch_size * patch_size + 3
-        self.observation_space = spaces.Box(low=0, high=1, shape=(obs_dim,), dtype=np.float32)
+        kappa_max = info_cfg.get("kappa_max", 1.0)
+        self.observation_space = spaces.Box(low=0, high=max(1.0, kappa_max),
+                                            shape=(obs_dim,), dtype=np.float32)
         self.patch_radius = patch_radius
 
         self.max_steps = config["simulation"]["max_steps"]
