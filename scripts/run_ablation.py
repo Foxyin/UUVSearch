@@ -33,21 +33,21 @@ ABLATION_GROUPS = {
         "collision_penalty": -2.0,
         "step_penalty": -0.05
     },
-    "no_coverage": {
+    "no_exploration_reward": {
         "coverage_gain": 0.0,
         "revisit_gain": 0.0,
         "find_target": 100.0,
         "collision_penalty": -2.0,
         "step_penalty": -0.05
     },
-    "no_target": {
+    "no_target_reward": {
         "coverage_gain": 1.0,
         "revisit_gain": 0.1,
         "find_target": 0.0,
         "collision_penalty": -2.0,
         "step_penalty": -0.05
     },
-    "target_only": {
+    "target_reward_only": {
         "coverage_gain": 0.0,
         "revisit_gain": 0.0,
         "find_target": 100.0,

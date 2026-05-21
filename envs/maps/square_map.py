@@ -28,9 +28,9 @@ class SquareMap(BaseMap):
         self._place_obstacles()
 
     def _place_obstacles(self):
-        np.random.seed(42)  # 可复现
+        rng = np.random.RandomState(42)
         for _ in range(int(self.size * self.size * self.obstacle_ratio)):
-            r, c = np.random.randint(1, self.size-1, 2)
+            r, c = rng.randint(1, self.size-1, 2)
             if self.grid[r, c] == 0:
                 self.grid[r, c] = 1
 

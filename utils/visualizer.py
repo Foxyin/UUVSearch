@@ -34,8 +34,8 @@ def plot_uncertainty_heatmap(matrix, title="Uncertainty Map", save_path=None):
     im = plt.imshow(matrix, origin='upper', cmap='hot', interpolation='nearest')
     plt.colorbar(im, label='Uncertainty')
     plt.title(title)
-    plt.xlabel('Grid X')
-    plt.ylabel('Grid Y')
+    plt.xlabel('Grid Col')
+    plt.ylabel('Grid Row')
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         plt.close()
@@ -49,8 +49,8 @@ def plot_probability_heatmap(matrix, title="Probability Map", save_path=None):
     im = plt.imshow(matrix, origin='upper', cmap='viridis', interpolation='nearest')
     plt.colorbar(im, label='Probability')
     plt.title(title)
-    plt.xlabel('Grid X')
-    plt.ylabel('Grid Y')
+    plt.xlabel('Grid Col')
+    plt.ylabel('Grid Row')
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         plt.close()
