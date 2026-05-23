@@ -15,8 +15,8 @@ class Evaluator:
         self.fig_dir = os.path.join("experiments", "figures", exp_name)
         os.makedirs(self.fig_dir, exist_ok=True)
 
-    def evaluate(self, num_episodes=100, save_fig_every=20):
-        """运行多回合评估，返回统计结果"""
+    def evaluate(self, num_episodes=100, save_fig_every=20, seed=0):
+        """运行多回合评估。seed 为基准种子（第 ep 回合用 seed+ep）"""
         results = {
             "success": [],
             "steps": [],
@@ -25,9 +25,9 @@ class Evaluator:
         }
 
         for ep in range(num_episodes):
-            obs, info = self.env.reset(seed=ep)
+            obs, info = self.env.reset(seed=seed + ep)
             trajectory = []
-            fov_history = []     # 每步的实际 FOV 格子列表
+            fov_history = []
             done = False
             step_count = 0
 

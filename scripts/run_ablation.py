@@ -68,8 +68,9 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
     full_config["total_steps"] = total_steps
     full_config["save_freq"] = total_steps
 
-    # 固定全局随机种子，确保消融可复现
+    # 固定全局 + 环境随机种子，确保消融完全可复现
     np.random.seed(seed)
+    rng_state = np.random.RandomState(seed)
 
     exp_name = f"ablation_{algo_name}_{name}_seed{seed}"
     print(f"\n{'='*50}")
@@ -79,6 +80,7 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
 
     map_obj = create_map(env_config["map"]["type"], env_config["map"])
     env = ContinuousSearchEnv(map_obj, env_config)
+    env.np_random = rng_state  # 同步环境 RNG，确保 reset 可复现
 
     if algo_name == "sac":
         trainer = SACTrainer(env, full_config, exp_name=exp_name)
@@ -95,6 +97,7 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
         raise RuntimeError(f"checkpoint 未生成: {final_ckpt}")
 
     eval_env = ContinuousSearchEnv(map_obj, env_config)
+    eval_env.np_random = rng_state  # 评估环境也用相同种子
     obs_dim = eval_env.observation_space.shape[0]
     action_dim = eval_env.action_space.n
 

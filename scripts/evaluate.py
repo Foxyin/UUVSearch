@@ -34,6 +34,8 @@ def main():
                         help="环境配置文件路径（默认：正方形连续环境）")
     parser.add_argument("--episodes", type=int, default=100,
                         help="评估回合数")
+    parser.add_argument("--seed", type=int, default=0,
+                        help="基准种子（第 ep 回合使用 seed+ep）")
     parser.add_argument("--save-fig-every", type=int, default=20,
                         help="每隔多少回合保存图片")
     parser.add_argument("--exp-name", type=str, default=None,
@@ -67,7 +69,8 @@ def main():
     print(f"加载模型: {args.checkpoint}")
 
     evaluator = Evaluator(env, agent, env_config, exp_name=f"eval_{exp_name}")
-    stats = evaluator.evaluate(num_episodes=args.episodes, save_fig_every=args.save_fig_every)
+    stats = evaluator.evaluate(num_episodes=args.episodes, save_fig_every=args.save_fig_every,
+                               seed=args.seed)
     print("评估完成，图片保存在 experiments/figures/ 下。")
 
 
