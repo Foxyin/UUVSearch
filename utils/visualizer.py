@@ -1,16 +1,30 @@
 """
 UUVSearch - 可视化工具
-支持轨迹图、不确定热力图、概率热力图。
+轨迹图（含障碍物背景）、不确定热力图、概率热力图。
 """
 import matplotlib
-matplotlib.use('Agg')  # 非交互后端，适合服务器或批量生成
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_trajectory(x, y, target_x, target_y, title="Trajectory", save_path=None):
-    """绘制AUV运动轨迹"""
+def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
+                    title="Trajectory", save_path=None):
+    """绘制AUV运动轨迹，可选叠加障碍物背景"""
     plt.figure(figsize=(8, 6))
+
+    # 障碍物背景
+    if grid is not None:
+        rows, cols = grid.shape
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r, c] == 1:
+                    rx = c * resolution
+                    ry = r * resolution
+                    rect = plt.Rectangle((rx, ry), resolution, resolution,
+                                         facecolor='gray', alpha=0.5, edgecolor='none')
+                    plt.gca().add_patch(rect)
+
     plt.plot(x, y, 'b-', linewidth=1.5, label='AUV Path')
     plt.plot(x[0], y[0], 'go', markersize=8, label='Start')
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
@@ -21,6 +35,8 @@ def plot_trajectory(x, y, target_x, target_y, title="Trajectory", save_path=None
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.axis('equal')
+    plt.xlim(0, cols * resolution if grid is not None else None)
+    plt.ylim(0, rows * resolution if grid is not None else None)
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         plt.close()
@@ -29,10 +45,9 @@ def plot_trajectory(x, y, target_x, target_y, title="Trajectory", save_path=None
 
 
 def plot_uncertainty_heatmap(matrix, title="Uncertainty Map", save_path=None):
-    """绘制不确定度热力图"""
     plt.figure(figsize=(7, 6))
-    im = plt.imshow(matrix, origin='upper', cmap='hot', interpolation='nearest')
-    plt.colorbar(im, label='Uncertainty')
+    plt.imshow(matrix, origin='upper', cmap='hot', interpolation='nearest')
+    plt.colorbar(label='Uncertainty')
     plt.title(title)
     plt.xlabel('Grid Col')
     plt.ylabel('Grid Row')
@@ -44,10 +59,9 @@ def plot_uncertainty_heatmap(matrix, title="Uncertainty Map", save_path=None):
 
 
 def plot_probability_heatmap(matrix, title="Probability Map", save_path=None):
-    """绘制目标存在概率热力图"""
     plt.figure(figsize=(7, 6))
-    im = plt.imshow(matrix, origin='upper', cmap='viridis', interpolation='nearest')
-    plt.colorbar(im, label='Probability')
+    plt.imshow(matrix, origin='upper', cmap='viridis', interpolation='nearest')
+    plt.colorbar(label='Probability')
     plt.title(title)
     plt.xlabel('Grid Col')
     plt.ylabel('Grid Row')

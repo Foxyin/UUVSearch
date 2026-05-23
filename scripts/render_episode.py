@@ -1,8 +1,8 @@
 """
-UUVSearch - 单回合可视化演示（修复版）
+UUVSearch - 单回合可视化演示
 用法:
-  python scripts/render_episode.py --algo sac --checkpoint experiments/checkpoints/sac_test/step_50000.pt
-  python scripts/render_episode.py --algo dqn --checkpoint ... --max-steps 200
+  python scripts/render_episode.py --algo sac --checkpoint <path>
+  python scripts/render_episode.py --algo dqn --checkpoint <path> --max-steps 200
 """
 import sys
 import os
@@ -10,7 +10,7 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import matplotlib
-matplotlib.use('TkAgg')  # 强制使用 Tkinter 后端，确保窗口正常显示
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 from utils.config_loader import load_config
@@ -24,11 +24,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--algo", type=str, required=True, choices=["dqn", "sac"])
     parser.add_argument("--checkpoint", type=str, required=True)
-    parser.add_argument("--max-steps", type=int, default=500, help="最大显示步数")
+    parser.add_argument("--max-steps", type=int, default=300,
+                        help="最大显示步数（默认匹配环境配置）")
     parser.add_argument("--env-config", type=str, default="config/env/continuous_square.yaml")
     args = parser.parse_args()
 
-    # 加载环境和算法
     env_config = load_config(args.env_config)
     map_obj = create_map(env_config["map"]["type"], env_config["map"])
     env = ContinuousSearchEnv(map_obj, env_config)
@@ -48,7 +48,8 @@ def main():
 
     obs, info = env.reset()
     done = False
-    xs, ys = [], []
+    x, y, _ = env.auv_state
+    xs, ys = [x], [y]
     step = 0
 
     plt.ion()
@@ -58,13 +59,24 @@ def main():
     ax.set_xlabel("X (m)")
     ax.set_ylabel("Y (m)")
     ax.set_title("AUV Search Demo (press 'q' to exit)")
+    ax.set_aspect('equal')
     ax.grid(True, alpha=0.3)
 
-    # 绘制目标
+    # 障碍物背景
+    grid = env.map.grid
+    for r in range(grid.shape[0]):
+        for c in range(grid.shape[1]):
+            if grid[r, c] == 1:
+                rx = c * env.map.resolution
+                ry = r * env.map.resolution
+                rect = plt.Rectangle((rx, ry), env.map.resolution, env.map.resolution,
+                                     facecolor='gray', alpha=0.5, edgecolor='none')
+                ax.add_patch(rect)
+
+    # 目标
     target_x = (env.target_pos_grid[1] + 0.5) * env.map.resolution
     target_y = (env.target_pos_grid[0] + 0.5) * env.map.resolution
-    target_marker, = ax.plot(target_x, target_y, 'y*', markersize=15, label='Target')
-    # 轨迹线和当前位置
+    ax.plot(target_x, target_y, 'y*', markersize=15, label='Target')
     traj_line, = ax.plot([], [], 'b-', linewidth=1.5, label='Path')
     auv_marker, = ax.plot([], [], 'ro', markersize=8, label='AUV')
     ax.legend()
@@ -79,19 +91,19 @@ def main():
         ys.append(y)
         step += 1
 
-        # 更新绘图数据
         traj_line.set_data(xs, ys)
         auv_marker.set_data([x], [y])
         ax.set_title(f"Step: {step} | Reward: {reward:.1f}")
 
         fig.canvas.draw_idle()
-        plt.pause(0.05)  # 控制播放速度，秒
+        fig.canvas.flush_events()
+        plt.pause(0.1)
 
     plt.ioff()
     if env.found:
-        ax.set_title(f"✅ Target Found! Total Steps: {step}")
+        ax.set_title(f"Target Found! Total Steps: {step}")
     else:
-        ax.set_title(f"❌ Not Found (Max Steps: {step})")
+        ax.set_title(f"Not Found (Max Steps: {step})")
     plt.show(block=True)
 
 
