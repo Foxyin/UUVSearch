@@ -15,11 +15,12 @@ class DQNTrainer:
         self.agent = DQNAgent(obs_dim, action_dim, config["algo"])
         self.max_steps = config["simulation"]["max_steps"]
         self.total_steps = config.get("total_steps", 100000)
-        self.save_freq = config.get("save_freq", 50000)
+        self.save_freq = config.get("save_freq", 20000)
         self.log_freq = config.get("log_freq", 1000)
         self.checkpoint_dir = f"experiments/checkpoints/{exp_name}"
         os.makedirs(self.checkpoint_dir, exist_ok=True)
         self.logger = Logger(log_dir=f"experiments/logs/{exp_name}")
+        self.best_sr = -1.0
 
     def train(self):
         obs, info = self.env.reset()
@@ -58,7 +59,14 @@ class DQNTrainer:
                 episode_len = 0
 
             if (step + 1) % self.save_freq == 0:
-                self.agent.save(os.path.join(self.checkpoint_dir, f"step_{step+1}.pt"))
+                ckpt_path = os.path.join(self.checkpoint_dir, f"step_{step+1}.pt")
+                self.agent.save(ckpt_path)
+                # 保持当前最优权重（基于训练 success_rate）
+                if recent_success:
+                    sr = np.mean(recent_success)
+                    if sr > self.best_sr:
+                        self.best_sr = sr
+                        self.agent.save(os.path.join(self.checkpoint_dir, "best.pt"))
 
         # 训练结束时强制保存最终模型
         final_path = os.path.join(self.checkpoint_dir, f"step_{self.total_steps}.pt")
