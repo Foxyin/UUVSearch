@@ -28,7 +28,7 @@ def main():
                         help="最大步数")
     parser.add_argument("--env-config", type=str, default="config/env/continuous_square.yaml")
     parser.add_argument("--save-video", type=str, default=None,
-                        help="保存动画文件路径（.gif 或 .mp4，如 demo.gif）")
+                        help="保存动画（.mp4 或 .gif），默认存到 experiments/figures/")
     args = parser.parse_args()
 
     # 录制模式用非交互后端
@@ -143,7 +143,13 @@ def main():
             plt.pause(0.1)
 
     if args.save_video and frames_data:
-        print(f"录制 {len(frames_data)} 帧 → {args.save_video}")
+        # 默认路径
+        video_path = args.save_video
+        if not os.path.dirname(video_path):
+            os.makedirs("experiments/figures", exist_ok=True)
+            video_path = os.path.join("experiments", "figures", video_path)
+
+        print(f"录制 {len(frames_data)} 帧 → {video_path}")
 
         def draw_frame(data):
             traj_line.set_data(data['xs'], data['ys'])
@@ -164,15 +170,18 @@ def main():
             return [traj_line, auv_marker, sonar_circle] + fov_patches
 
         ani = animation.FuncAnimation(fig, draw_frame, frames=frames_data,
-                                      interval=100, blit=False, repeat=False)
-        try:
-            ani.save(args.save_video, writer='ffmpeg', fps=10, dpi=150)
-        except (ValueError, FileNotFoundError):
-            # ffmpeg 不可用时回退为 Pillow GIF
-            if not args.save_video.endswith('.gif'):
-                args.save_video = args.save_video.rsplit('.', 1)[0] + '.gif'
-            ani.save(args.save_video, writer='pillow', fps=10, dpi=150)
-        print(f"动画已保存: {args.save_video}")
+                                      interval=200, blit=False, repeat=False)
+        if video_path.endswith('.mp4'):
+            # 指向 conda 环境中的 ffmpeg
+            ffmpeg_path = os.path.join(os.path.dirname(sys.executable), 'Library', 'bin', 'ffmpeg.exe')
+            if os.path.exists(ffmpeg_path):
+                matplotlib.rcParams['animation.ffmpeg_path'] = ffmpeg_path
+            ani.save(video_path, writer='ffmpeg', fps=5, dpi=150)
+        else:
+            if not video_path.endswith('.gif'):
+                video_path = video_path.rsplit('.', 1)[0] + '.gif'
+            ani.save(video_path, writer='pillow', fps=4, dpi=150)
+        print(f"动画已保存: {video_path}")
     elif not args.save_video:
         plt.ioff()
         if env.found:
