@@ -46,7 +46,7 @@ ABLATION_GROUPS = {
         "find_target": 0.0,
         "collision_penalty": -2.0,
         "step_penalty": -0.05
-    },
+    },  # 无目标奖励：纯覆盖驱动，验证目标奖励的必要性
     "target_reward_only": {
         "coverage_gain": 0.0,
         "revisit_gain": 0.0,

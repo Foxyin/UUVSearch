@@ -28,7 +28,7 @@ rewards:
   coverage_gain: 1.0          # 首次覆盖新格子
   revisit_gain: 0.0           # 不奖励重访，避免刷分局部最优
   find_target: 100.0
-  collision_penalty: -2.0     # 大幅降低（原-50）
+  collision_penalty: -2.0
   step_penalty: -0.05         # 每步微小惩罚，鼓励高效
 
 simulation:

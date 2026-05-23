@@ -3,8 +3,8 @@ hidden_dim: 256
 gamma: 0.99
 lr: 1e-4
 epsilon_start: 1.0
-epsilon_min: 0.1                   # 保留 10% 探索（原 0.05）
-epsilon_decay_steps: 300000         # 匹配更长的训练（原 150k）
+epsilon_min: 0.1                   # 保留 10% 探索
+epsilon_decay_steps: 300000         # 线性衰减至 epsilon_min
 buffer_size: 100000
 batch_size: 64
 learn_start: 1000
