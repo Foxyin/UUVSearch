@@ -79,6 +79,9 @@ def main():
     ax.plot(target_x, target_y, 'y*', markersize=15, label='Target')
     traj_line, = ax.plot([], [], 'b-', linewidth=1.5, label='Path')
     auv_marker, = ax.plot([], [], 'ro', markersize=8, label='AUV')
+    sonar_circle = plt.Circle((0, 0), env.sonar.max_range * env.map.resolution,
+                              facecolor='cyan', alpha=0.15, edgecolor='cyan', linewidth=0.5)
+    ax.add_patch(sonar_circle)
     ax.legend()
 
     while not done and step < args.max_steps:
@@ -93,7 +96,11 @@ def main():
 
         traj_line.set_data(xs, ys)
         auv_marker.set_data([x], [y])
-        ax.set_title(f"Step: {step} | Reward: {reward:.1f}")
+        # 更新声呐范围圈
+        sonar_circle.set_center((x, y))
+        sonar_r = env.sonar.max_range * env.map.resolution
+        ax.set_title(f"Step: {step} | Reward: {reward:.1f}"
+                     f"{' | FOUND!' if env.found else ''}")
 
         fig.canvas.draw_idle()
         fig.canvas.flush_events()

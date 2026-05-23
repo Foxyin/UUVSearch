@@ -83,6 +83,8 @@ class ContinuousSearchEnv(gym.Env):
 
         dpsi = self.ACTION_ANGLES[action]
         old_state = self.auv_state.copy()
+        old_grid_r = int(old_state[1] / self.map.resolution)
+        old_grid_c = int(old_state[0] / self.map.resolution)
         self.auv_state = self.auv_model.step(self.auv_state, dpsi)
         x, y, psi = self.auv_state
 
@@ -91,10 +93,16 @@ class ContinuousSearchEnv(gym.Env):
         grid_r = int(y / self.map.resolution)
         grid_c = int(x / self.map.resolution)
 
+        # 检查目标格
         if not (0 <= grid_r < self.map.size and 0 <= grid_c < self.map.size):
             collision = True
         elif self.map.grid[grid_r, grid_c] == 1:
             collision = True
+        # 对角线移动时检查途经的侧邻格（防止穿过障碍物角落）
+        elif abs(grid_r - old_grid_r) == 1 and abs(grid_c - old_grid_c) == 1:
+            if (self.map.grid[old_grid_r, grid_c] == 1 or
+                    self.map.grid[grid_r, old_grid_c] == 1):
+                collision = True
 
         if collision:
             self.auv_state = old_state

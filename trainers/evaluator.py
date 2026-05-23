@@ -78,6 +78,7 @@ class Evaluator:
         plot_trajectory(x, y, target_x, target_y,
                         grid=self.env.map.grid,
                         resolution=self.env.map.resolution,
+                        sonar_range=self.env.sonar.max_range,
                         title=f"Trajectory Episode {episode+1} ({'Found' if success else 'Not Found'}, Steps={step_count})",
                         save_path=os.path.join(self.fig_dir, f"trajectory_ep{episode+1}.png"))
 

@@ -9,11 +9,11 @@ import numpy as np
 
 
 def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
-                    title="Trajectory", save_path=None):
-    """绘制AUV运动轨迹，可选叠加障碍物背景"""
+                    sonar_range=None, title="Trajectory", save_path=None):
+    """绘制AUV运动轨迹，可选叠加障碍物背景和声呐范围"""
     plt.figure(figsize=(8, 6))
 
-    # 障碍物背景
+    rows, cols = (0, 0)
     if grid is not None:
         rows, cols = grid.shape
         for r in range(rows):
@@ -29,14 +29,29 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
     plt.plot(x[0], y[0], 'go', markersize=8, label='Start')
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
     plt.plot(target_x, target_y, 'y*', markersize=15, label='Target')
+
+    # 声呐范围：在终点位置画一个半透明圆
+    if sonar_range is not None:
+        sonar_radius = sonar_range * resolution
+        # 每隔 20 步画一个声呐圈，避免太密
+        step_interval = max(1, len(x) // 15)
+        for i in range(0, len(x), step_interval):
+            circle = plt.Circle((x[i], y[i]), sonar_radius,
+                                facecolor='cyan', alpha=0.08, edgecolor='none')
+            plt.gca().add_patch(circle)
+        # 终点画深色的
+        circle = plt.Circle((x[-1], y[-1]), sonar_radius,
+                            facecolor='cyan', alpha=0.2, edgecolor='cyan', linewidth=0.5)
+        plt.gca().add_patch(circle)
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
     plt.title(title)
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.axis('equal')
-    plt.xlim(0, cols * resolution if grid is not None else None)
-    plt.ylim(0, rows * resolution if grid is not None else None)
+    if grid is not None:
+        plt.xlim(0, cols * resolution)
+        plt.ylim(0, rows * resolution)
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
         plt.close()
