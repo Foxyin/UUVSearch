@@ -110,7 +110,13 @@ class GridEnv(gym.Env):
         dr, dc = self.ACTIONS[action]
         new_r = self.auv_pos[0] + dr
         new_c = self.auv_pos[1] + dc
-        if self.map.is_free(new_r, new_c):
+        can_move = self.map.is_free(new_r, new_c)
+        # 对角线移动时检查侧邻格，防止穿过障碍物角落
+        if can_move and abs(dr) == 1 and abs(dc) == 1:
+            if (not self.map.is_free(self.auv_pos[0], new_c) or
+                    not self.map.is_free(new_r, self.auv_pos[1])):
+                can_move = False
+        if can_move:
             self.auv_pos = (new_r, new_c)
 
         heading = self.ACTION_HEADING.get(action, 0)

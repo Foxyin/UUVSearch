@@ -112,7 +112,7 @@ class SACAgent:
             self.alpha_optimizer.zero_grad()
             alpha_loss.backward()
             self.alpha_optimizer.step()
-            self.log_alpha.data.clamp_(max=2.3026)  # ln(10)，α 不超过 10
+            self.log_alpha.data.clamp_(min=-4.6052, max=2.3026)  # α ∈ [0.01, 10]
             self.alpha = self.log_alpha.exp().item()
         else:
             # 即使不自动调整，也同步一下浮点值

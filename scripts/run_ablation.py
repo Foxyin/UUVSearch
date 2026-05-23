@@ -68,6 +68,9 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
     full_config["total_steps"] = total_steps
     full_config["save_freq"] = total_steps
 
+    # 固定全局随机种子，确保消融可复现
+    np.random.seed(seed)
+
     exp_name = f"ablation_{algo_name}_{name}_seed{seed}"
     print(f"\n{'='*50}")
     print(f"实验: {exp_name}  (算法: {algo_name}, 奖励组: {name}, seed: {seed})")

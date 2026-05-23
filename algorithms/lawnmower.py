@@ -107,18 +107,21 @@ class LawnmowerSearch(BaseAlgorithm):
         pos = self._get_grid_pos(obs)
         target = self.waypoints[self.current_target_idx]
 
+        advanced = False
         if max(abs(pos[0] - target[0]), abs(pos[1] - target[1])) <= 1:
             self.current_target_idx += 1
             self.stuck_counter = 0
             self.last_pos = pos
+            advanced = True
             if self.current_target_idx >= len(self.waypoints):
                 return 0
             target = self.waypoints[self.current_target_idx]
 
-        if self.last_pos is not None and pos == self.last_pos:
-            self.stuck_counter += 1
-        else:
-            self.stuck_counter = 0
+        if not advanced:
+            if self.last_pos is not None and pos == self.last_pos:
+                self.stuck_counter += 1
+            else:
+                self.stuck_counter = 0
         self.last_pos = pos
 
         if self.stuck_counter >= 4:
