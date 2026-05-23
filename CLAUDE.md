@@ -76,12 +76,23 @@ tensorboard --logdir experiments/logs/
 
 1. **概率更新为简化启发式**（×0.5/×2.0），非真贝叶斯。`sonar_model.get_detection_probability(distance)`已就绪待调用
 2. 单地图训练（SquareMap seed=42）
-3. GreedyProb表现受制于概率图质量
-4. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
+3. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
+4. DQN success_rate在ε触底后从峰值回落（92%→77%），需调整ε_min或探索策略
+
+## 基线性能 (continuous env, seed=42, max_steps=300)
+
+| 算法 | 成功率 | 平均步数 | 说明 |
+|------|--------|----------|------|
+| Random | 80% | 124 | 下界 |
+| GreedyProb | 87% | 81 | 信息驱动（修复后） |
+| Lawnmower | 100% | 35 | 上界（需完整地图） |
 
 ## 注意事项
 
+- 观测结构: 4 patch (cov/unc/prob/obstacle) × 121 + 状态 × 3 = 487维
+- **GreedyProb 的观测解析公式必须为 `(len(obs)-3)/4`**（与观测patch数一致）
 - 观测含障碍物通道（privileged避障信息，论文中需标注为"短程避障声呐"）
 - SquareMap._place_obstacles使用局部RandomState(42)，不影响全局种子
 - 网格环境与连续环境的动作空间不同（8方向 vs 5航向），实验对比以连续环境为准
 - SAC agent在`update()`中读写alpha时需注意detach和clamp顺序
+- ReplayBuffer使用np.random.RandomState，支持seed()设置可复现
