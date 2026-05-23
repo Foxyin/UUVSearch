@@ -1,13 +1,13 @@
 # UUVSearch - SAC 超参数
-hidden_dim: 128
+hidden_dim: 256
 gamma: 0.99
-tau: 0.003                # 减慢 target 跟随，防爆炸（原 0.005）
+tau: 0.003
 lr_actor: 1e-4
-lr_critic: 3e-5           # 降低 critic 学习率防发散（原 1e-4）
-lr_alpha: 1e-4            # 降低 alpha 学习率（原 3e-4）
+lr_critic: 3e-5
+lr_alpha: 1e-4
 alpha: 0.2
 auto_alpha: true
-target_entropy_scale: 1.0
+target_entropy_scale: 0.3          # 降低目标熵（原 1.0），允许更确定性策略
 buffer_size: 100000
 batch_size: 64
 learn_start: 1000

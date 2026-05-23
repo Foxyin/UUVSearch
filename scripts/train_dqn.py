@@ -16,8 +16,8 @@ from trainers.dqn_trainer import DQNTrainer
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp-name", type=str, default="dqn_square")
-    parser.add_argument("--total-steps", type=int, default=200000,
-                        help="总训练步数（建议 500k+ 以获得收敛）")
+    parser.add_argument("--total-steps", type=int, default=400000,
+                        help="总训练步数")
     args = parser.parse_args()
 
     # 加载环境配置 + 算法配置

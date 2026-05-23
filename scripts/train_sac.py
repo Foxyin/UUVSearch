@@ -16,8 +16,8 @@ from trainers.sac_trainer import SACTrainer
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp-name", type=str, default="sac_square")
-    parser.add_argument("--total-steps", type=int, default=200000,
-                        help="总训练步数（建议 500k+ 以获得收敛）")
+    parser.add_argument("--total-steps", type=int, default=400000,
+                        help="总训练步数")
     args = parser.parse_args()
 
     env_config = load_config("config/env/continuous_square.yaml")
