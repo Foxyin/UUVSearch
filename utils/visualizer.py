@@ -30,7 +30,7 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
     plt.plot(target_x, target_y, 'y*', markersize=15, label='Target')
 
-    # 终点位置的实际 FOV 格子（考虑遮挡）
+    # 终点位置：实际 FOV 格子 + 声呐最大范围虚线
     if fov_cells_list and sonar_range is not None:
         for (fr, fc) in fov_cells_list[-1]:
             rx = fc * resolution
@@ -38,6 +38,9 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
             rect = plt.Rectangle((rx, ry), resolution, resolution,
                                  facecolor='lime', alpha=0.15, edgecolor='none')
             plt.gca().add_patch(rect)
+        circle = plt.Circle((x[-1], y[-1]), sonar_range * resolution,
+                            facecolor='none', edgecolor='cyan', linewidth=1.0, linestyle='--')
+        plt.gca().add_patch(circle)
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
     plt.title(title)
