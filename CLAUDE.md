@@ -43,11 +43,11 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 
 ```bash
 # 训练（所有脚本从项目根目录运行）
-python scripts/train_dqn.py --exp-name dqn_v5 --total-steps 400000
-python scripts/train_sac.py --exp-name sac_v5 --total-steps 400000
+python scripts/train_dqn.py --exp-name dqn_v6 --total-steps 400000
+python scripts/train_sac.py --exp-name sac_v6 --total-steps 400000
 
-# 评估
-python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/<path>/step_XXXXX.pt --episodes 100
+# 评估（--seed 控制基准种子，第 ep 回合用 seed+ep）
+python scripts/evaluate.py --algo dqn --checkpoint experiments/checkpoints/<path>/best.pt --episodes 100 --seed 0
 
 # 传统算法测试
 python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 50 --seed 42
@@ -57,8 +57,9 @@ python scripts/run_algo.py --algo greedy_prob --episodes 30 --render
 python scripts/run_ablation.py --algo sac --total-steps 100000 --episodes 50 --repeat 5
 python scripts/plot_results.py --csv experiments/ablation/results_sac.csv
 
-# 可视化
+# 可视化（实时窗口 / 录制视频）
 python scripts/render_episode.py --algo sac --checkpoint <path> --max-steps 200
+python scripts/render_episode.py --algo dqn --checkpoint <path> --save-video demo.mp4
 tensorboard --logdir experiments/logs/
 ```
 
@@ -76,7 +77,6 @@ tensorboard --logdir experiments/logs/
 
 1. 单地图训练（SquareMap seed=42）
 2. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
-3. DQN/SAC确定性策略远弱于带探索策略，需进一步调参
 
 ## 基线性能 (continuous env, seed=42, max_steps=300, 真贝叶斯)
 
@@ -93,6 +93,9 @@ tensorboard --logdir experiments/logs/
 - 碰撞脱困：随机旋转90-180°打破死循环
 - DQN ε线性衰减 + SAC梯度裁剪α钳位
 - 观测含障碍物通道（4 patch = 487维）
+- checkpoint：20k步保存 + 自动保留训练 success_rate 最高的 best.pt
+- DQN 梯度裁剪（`clip_grad_norm_`, max_norm=10.0）防灾难性遗忘
+- revisit_gain=0 消除刷分局部最优（重访28格×300步 = +840 > 找目标 +100）
 
 ## 注意事项
 

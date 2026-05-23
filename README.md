@@ -81,10 +81,10 @@ python scripts/run_experiment.py --env continuous --algo random --episodes 20 --
 
 ```bash
 # 训练 DQN
-python scripts/train_dqn.py --exp-name dqn_v5 --total-steps 400000
+python scripts/train_dqn.py --exp-name dqn_v6 --total-steps 400000
 
 # 训练 SAC
-python scripts/train_sac.py --exp-name sac_v5 --total-steps 400000
+python scripts/train_sac.py --exp-name sac_v6 --total-steps 400000
 
 # 查看训练曲线（含 success_rate）
 tensorboard --logdir experiments/logs/
@@ -94,11 +94,11 @@ tensorboard --logdir experiments/logs/
 
 ```bash
 # 评估 SAC 在正方形地图上的表现
-python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v5/step_400000.pt --episodes 100
+python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v6/best.pt --episodes 100
 
 # 评估在非规则多边形上的泛化能力
 python scripts/evaluate.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v5/step_400000.pt \
+  --checkpoint experiments/checkpoints/sac_v6/best.pt \
   --env-config config/env/continuous_irregular.yaml --episodes 50
 ```
 
@@ -119,8 +119,11 @@ python scripts/plot_results.py --csv experiments/ablation/results_sac.csv
 
 ```bash
 python scripts/render_episode.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v5/step_400000.pt \
+  --checkpoint experiments/checkpoints/sac_v6/best.pt \
   --max-steps 200
+python scripts/render_episode.py --algo dqn \
+  --checkpoint experiments/checkpoints/dqn_v6/best.pt \
+  --save-video demo.mp4
 ```
 
 ## 核心设计
