@@ -94,9 +94,7 @@ tensorboard --logdir experiments/logs/
 
 ```bash
 # 评估 SAC 在正方形地图上的表现
-python scripts/evaluate.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v2/step_200000.pt \
-  --episodes 100
+python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v2/step_50000.pt   --episodes 100
 
 # 评估在非规则多边形上的泛化能力
 python scripts/evaluate.py --algo sac \
@@ -172,13 +170,13 @@ RL 智能体的观测由三部分组成：
 
 | 算法 | 类型 | 网格环境 | 连续环境 | 特点 |
 |------|------|:---:|:---:|------|
-| Random | 基线 | ✅ 8 动作 | ✅ 5 动作 | 均匀随机 |
-| Lawnmower | 传统 | ✅ 8 方向 | ✅ 5 航向 | 梳形覆盖 + 贪心导航 + 脱困 |
-| GreedyProb | 传统 | ✅ 8 方向 | ✅ 5 航向 | 走向最高概率格子 + 脱困 |
+| Random | 基线 | ✅ 8 动作 | ✅ 5 动作 | 均匀随机 — 搜索效率的下界 |
+| Lawnmower | 传统 | ✅ 8 方向 | ✅ 5 航向 | 预知全图，梳形全覆盖 — 效率上界 |
+| GreedyProb | 传统 | ✅ 8 方向 | ✅ 5 航向 | 信息驱动，走向概率最高处 — 测试信息地图价值 |
 | DQN | Value RL | — | ✅ 5 动作 | target network + ε-greedy（线性衰减） |
 | SAC | Actor-Critic RL | — | ✅ 5 动作 | 双 Critic + 自动熵调节 |
 
-> 传统算法与 RL 算法在**同一连续环境**下对比，保证公平性。声呐范围已缩小至 3（原 5）以增加搜索难度。
+> 三个传统算法形成基线梯度：Random（不用信息）→ GreedyProb（用信息地图）→ Lawnmower（用完整地图）。RL 算法在不依赖完整地图的条件下逼近 Lawnmower 的效率，即为有效学习。
 
 ## 扩展指南
 

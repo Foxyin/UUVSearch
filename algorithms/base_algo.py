@@ -1,25 +1,27 @@
 """
 UUVSearch - 算法抽象基类
+
+所有传统搜索算法（Random、Lawnmower、GreedyProb）继承此类。
+RL 算法（DQN、SAC）有自己的接口，不继承此类。
 """
 from abc import ABC, abstractmethod
 
 
 class BaseAlgorithm(ABC):
-    """所有搜索算法必须实现的接口"""
+    """传统搜索算法接口"""
 
     def __init__(self, config: dict):
         self.config = config
 
     @abstractmethod
-    def select_action(self, obs: dict) -> int:
+    def select_action(self, obs) -> int:
         """
-        根据观测选择动作
+        根据观测选择动作。
 
-        Args:
-            obs: 环境返回的观测字典，至少包含 'auv_pos' (row, col)
+        网格环境: obs 为 dict，含 auv_pos、hotspot 等字段
+        连续环境: obs 为 1D numpy array（patch + 归一化状态）
 
-        Returns:
-            action: int, 0~7 之间的动作编号
+        Returns: 动作编号（网格 0-7，连续 0-4）
         """
         pass
 

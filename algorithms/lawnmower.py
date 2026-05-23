@@ -1,6 +1,18 @@
 """
-UUVSearch - 梳形覆盖算法
-支持网格环境和连续运动学环境，生成蛇形航路点，贪心导航。
+UUVSearch - 梳形覆盖算法（全覆盖基线 / 上界）
+
+依赖完整地图（map_obj）预生成蛇形航路点，遍历所有自由格子。自带卡住检测与
+随机脱困。导航方式根据环境自动切换：网格环境用 8 方向离散移动，连续环境用
+航向导航。
+
+⚠️ 此算法需要完整的 grid 信息才能生成航路点，不代表真实 UUV（无先验地图）
+的能力。它作为"已知地图最优全覆盖"的上界基线，用于衡量其他算法的覆盖率差距。
+
+用法:
+  # 网格环境
+  python scripts/run_algo.py --algo lawnmower --episodes 30
+  # 连续环境
+  python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 50
 """
 import numpy as np
 from .base_algo import BaseAlgorithm

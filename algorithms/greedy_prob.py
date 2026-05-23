@@ -1,6 +1,23 @@
 """
-UUVSearch - 贪心概率搜索算法
-走向信息地图中目标概率最高的格子，作为比 lawnmower 更强的传统基线。
+UUVSearch - 贪心概率搜索算法（信息驱动基线）
+
+与 Random 和 Lawnmower 不同，此算法使用信息地图（概率图）的输出来驱动搜索：
+每步走向当前观测中目标概率最高的可达自由格子。
+
+作用：验证"信息地图驱动搜索"是否比"不使用信息的搜索"更好。
+- vs Random:  信息驱动 vs 纯粹随机
+- vs Lawnmower: 信息驱动 vs 预知地图的全覆盖（公平性见下）
+
+⚠️ 当前概率更新为简化启发式（×0.5/×2.0），非真贝叶斯。概率图质量直接影响此
+算法的表现。升级为真贝叶斯更新后，此算法的表现会自然提升。
+
+支持网格环境（读取 obs["hotspot"]）和连续环境（从概率 patch 提取最大值）。
+
+用法:
+  # 网格环境
+  python scripts/run_algo.py --algo greedy_prob --episodes 30
+  # 连续环境
+  python scripts/run_experiment.py --env continuous --algo greedy_prob --episodes 50
 """
 import numpy as np
 from .base_algo import BaseAlgorithm
