@@ -7,7 +7,7 @@ map:
 
 auv:
   cruise_speed: 1.0
-  time_step: 60.0
+  time_step: 30.0            # 30m/步=1格，更精细控制
   max_heading_change: 90
   init_pos: [30.0, 30.0]
   init_heading: 0.0
@@ -32,4 +32,4 @@ rewards:
   step_penalty: -0.05         # 每步微小惩罚，鼓励高效
 
 simulation:
-  max_steps: 500
+  max_steps: 800    # 步长减半后需更多步数（原 500）

@@ -33,7 +33,8 @@ class ContinuousSearchEnv(gym.Env):
 
         patch_radius = config.get("obs_patch_radius", 5)
         patch_size = 2 * patch_radius + 1
-        obs_dim = 3 * patch_size * patch_size + 3
+        # 4 个 patch: coverage + uncertainty + probability + obstacle
+        obs_dim = 4 * patch_size * patch_size + 3
         kappa_max = info_cfg.get("kappa_max", 1.0)
         self.observation_space = spaces.Box(low=0, high=max(1.0, kappa_max),
                                             shape=(obs_dim,), dtype=np.float32)
@@ -97,8 +98,11 @@ class ContinuousSearchEnv(gym.Env):
 
         if collision:
             self.auv_state = old_state
+            # 随机旋转 90-180° 打破碰撞死循环
+            perturb = self.np_random.uniform(np.pi / 2, np.pi)
+            perturb *= self.np_random.choice([-1, 1])
+            self.auv_state[2] = (self.auv_state[2] + perturb + np.pi) % (2 * np.pi) - np.pi
             reward = self.reward_weights.get("collision_penalty", -2.0)
-            # 不加步数惩罚，避免重复计数
             self.step_count += 1
             obs = self._get_observation()
             return obs, reward, terminated, self.step_count >= self.max_steps, {"collision": True}
@@ -164,6 +168,8 @@ class ContinuousSearchEnv(gym.Env):
         cov_patch = extract_patch(self.info_map.coverage, center_r, center_c, self.patch_radius)
         unc_patch = extract_patch(self.info_map.uncertainty, center_r, center_c, self.patch_radius)
         prob_patch = extract_patch(self.info_map.probability, center_r, center_c, self.patch_radius)
+        # 障碍物通道：agent 直接看到附近的地形
+        obs_patch = (extract_patch(self.map.grid, center_r, center_c, self.patch_radius) == 1).astype(np.float32)
 
         x_norm = x / self.map.length
         y_norm = y / self.map.length
@@ -173,6 +179,7 @@ class ContinuousSearchEnv(gym.Env):
             cov_patch.flatten(),
             unc_patch.flatten(),
             prob_patch.flatten(),
+            obs_patch.flatten(),
             [x_norm, y_norm, psi_norm]
         ]).astype(np.float32)
         return obs

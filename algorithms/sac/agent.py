@@ -87,6 +87,8 @@ class SACAgent:
 
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.critic1.parameters(), max_norm=10.0)
+        torch.nn.utils.clip_grad_norm_(self.critic2.parameters(), max_norm=10.0)
         self.critic_optimizer.step()
 
         # 更新 Actor
@@ -110,6 +112,7 @@ class SACAgent:
             self.alpha_optimizer.zero_grad()
             alpha_loss.backward()
             self.alpha_optimizer.step()
+            self.log_alpha.data.clamp_(max=2.3026)  # ln(10)，α 不超过 10
             self.alpha = self.log_alpha.exp().item()
         else:
             # 即使不自动调整，也同步一下浮点值
