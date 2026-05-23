@@ -6,79 +6,87 @@ import numpy as np
 
 
 class InfoMap:
-    def __init__(self, map_obj, config: dict):
+    def __init__(self, map_obj, config: dict, sonar=None):
         self.map = map_obj
         self.cfg = config
+        self.sonar = sonar  # 声呐模型，用于距离相关贝叶斯更新
 
         rows, cols = map_obj.grid.shape
         self.shape = (rows, cols)
 
-        # 覆盖图：0=未覆盖，1=已覆盖
         self.coverage = np.zeros(self.shape, dtype=np.float32)
-
-        # 不确定图：初始为最大值
         self.kappa_max = config.get("kappa_max", 1.0)
         self.uncertainty = np.full(self.shape, self.kappa_max, dtype=np.float32)
 
-        # 目标概率图：初始均匀分布（只分布在自由格子上）
         mask = map_obj.get_mask()
         self.probability = np.zeros(self.shape, dtype=np.float32)
         self.probability[mask] = 1.0 / np.sum(mask)
 
         self.growth_factor = config.get("growth_factor", 50)
-        self.uncertainty_decay = config.get("uncertainty_decay", 1.0)  # 1.0=不恢复（固定目标）
+        self.uncertainty_decay = config.get("uncertainty_decay", 1.0)
         self._update_counter = 0
 
-    def update(self, fov_cells, target_detected: bool):
+    def update(self, fov_cells, target_detected: bool, auv_pos=None):
         """
-        根据声纳探测结果更新三张图
-
         Args:
-            fov_cells: list of (row, col) 当前探测到的网格坐标
-            target_detected: bool 本次探测是否发现目标
+            fov_cells: FOV 格子列表
+            target_detected: 本次是否探测到目标
+            auv_pos: (row, col) AUV 位置，用于距离相关贝叶斯（可选）
         """
         self._update_counter += 1
 
-        # 1. 更新覆盖图：FOV内所有自由格子标记为已覆盖
+        # 1. 覆盖图
         for (r, c) in fov_cells:
             if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
-                if self.map.is_free(r, c):  # 障碍物不标记
+                if self.map.is_free(r, c):
                     self.coverage[r, c] = 1.0
-                    self.map.mark_visited(r, c)  # 同步更新地图的已访问标记
+                    self.map.mark_visited(r, c)
 
-        # 2. 更新不确定图：FOV 内归零
+        # 2. 不确定图
         for (r, c) in fov_cells:
             if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
                 if self.map.is_free(r, c):
                     self.uncertainty[r, c] = 0.0
-        # 非 FOV 区域的不确定度随时间恢复（遗忘因子）
         self.uncertainty = np.minimum(self.kappa_max, self.uncertainty / self.uncertainty_decay)
 
-        # 3. 贝叶斯更新目标概率（极度简化）
-        #    如果探测到目标：FOV内格子概率倍增，FOV外略降
-        #    如果未探测到：FOV内格子概率减半，FOV外略增
-        if target_detected:
-            # 探测到目标：FOV内概率大幅提高
-            for (r, c) in fov_cells:
-                if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
-                    self.probability[r, c] *= 2.0
-            # 全局重新归一化
-            total = np.sum(self.probability)
-            if total > 0:
-                self.probability /= total
+        # 3. 目标概率更新
+        if self.sonar is not None and auv_pos is not None:
+            self._bayesian_update(fov_cells, target_detected, auv_pos)
         else:
-            # 未探测到目标：FOV内概率降低
-            for (r, c) in fov_cells:
-                if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
-                    self.probability[r, c] *= 0.5
-            # 重新归一化（注意不能把概率全置零）
-            total = np.sum(self.probability)
-            if total > 1e-12:
-                self.probability /= total
-            else:
-                # 如果概率全部接近0，重置为均匀分布（安全措施）
-                mask = self.map.get_mask()
-                self.probability[mask] = 1.0 / np.sum(mask)
+            self._heuristic_update(fov_cells, target_detected)
+
+    def _bayesian_update(self, fov_cells, target_detected, auv_pos):
+        """距离相关的真贝叶斯更新"""
+        r0, c0 = auv_pos
+        for (r, c) in fov_cells:
+            if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
+                if not self.map.is_free(r, c):
+                    continue
+                d = np.sqrt((r - r0) ** 2 + (c - c0) ** 2)
+                p_detect = self.sonar.get_detection_probability(d)
+                if target_detected:
+                    self.probability[r, c] *= p_detect
+                else:
+                    self.probability[r, c] *= (1.0 - p_detect)
+        total = np.sum(self.probability)
+        if total > 1e-12:
+            self.probability /= total
+        else:
+            mask = self.map.get_mask()
+            self.probability[mask] = 1.0 / np.sum(mask)
+
+    def _heuristic_update(self, fov_cells, target_detected):
+        """旧版简化启发式（声呐不可用时的回退）"""
+        factor = 2.0 if target_detected else 0.5
+        for (r, c) in fov_cells:
+            if 0 <= r < self.shape[0] and 0 <= c < self.shape[1]:
+                self.probability[r, c] *= factor
+        total = np.sum(self.probability)
+        if total > 1e-12:
+            self.probability /= total
+        else:
+            mask = self.map.get_mask()
+            self.probability[mask] = 1.0 / np.sum(mask)
 
     def get_stats(self) -> dict:
         """返回当前信息图的统计信息，用于调试"""

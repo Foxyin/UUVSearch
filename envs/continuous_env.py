@@ -26,7 +26,7 @@ class ContinuousSearchEnv(gym.Env):
 
         info_cfg = config["info_map"].copy()
         info_cfg["resolution"] = map_obj.resolution
-        self.info_map = InfoMap(map_obj, info_cfg)
+        self.info_map = InfoMap(map_obj, info_cfg, sonar=self.sonar)
 
         self.action_space = spaces.Discrete(len(self.ACTION_ANGLES))
         self.action_angles = self.ACTION_ANGLES
@@ -53,7 +53,7 @@ class ContinuousSearchEnv(gym.Env):
         super().reset(seed=seed)
 
         self.map.grid = self.initial_grid.copy()
-        self.info_map = InfoMap(self.map, self.cfg["info_map"])
+        self.info_map = InfoMap(self.map, self.cfg["info_map"], sonar=self.sonar)
 
         free_cells = self.map.get_free_cells()
         target_idx = self.np_random.choice(len(free_cells))
@@ -125,7 +125,7 @@ class ContinuousSearchEnv(gym.Env):
 
         # 记录更新前的覆盖图
         prev_coverage = self.info_map.coverage.copy()
-        self.info_map.update(fov_cells, target_detected)
+        self.info_map.update(fov_cells, target_detected, auv_pos=(grid_r, grid_c))
 
         if target_detected:
             self.found = True
