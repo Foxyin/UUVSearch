@@ -94,7 +94,7 @@ tensorboard --logdir experiments/logs/
 
 ```bash
 # 评估 SAC 在正方形地图上的表现
-python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v2/step_50000.pt   --episodes 100
+python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v4/step_50000.pt   --episodes 100
 
 # 评估在非规则多边形上的泛化能力
 python scripts/evaluate.py --algo sac \
@@ -227,19 +227,9 @@ sonar:
 
 ## 已知局限与未来工作
 
-### 🔴 最高优先级：真贝叶斯更新（未解决）
+### ✅ 真贝叶斯更新（已完成 2026-05-23）
 
-**当前状态**：目标概率图使用 `×0.5`（未探测到）/ `×2.0`（探测到）+ 全局重归一化的启发式更新。代码中标注为"贝叶斯更新（极度简化）"，但**这不是贝叶斯推断**——因子与声呐传感器模型无数学关联。
-
-**论文风险**：如果在 Method 章节写 "Bayesian update on target probability"，reviewer 看代码是 `probability *= 0.5`，会导致直接 rejection。**要么改成真贝叶斯，要么论文中诚实标注为 "simplified heuristic update" 并解释局限性。**
-
-**解决方案（待实施）**：
-1. 利用已实现的 `sonar.get_detection_probability(distance)` 方法获取距离相关检测概率
-2. 对 FOV 内每个自由格子执行：`P_new(target) ∝ P(no_detect | target) × P_old(target)`，其中 `P(no_detect | target) = 1 - P_detect(distance)`
-3. 全局归一化后，产生信息增益（KL 散度）作为 intrinsic reward
-4. 此改进将使项目从"复现"升级为有方法论贡献的研究
-
-相关代码位置：`envs/info_map.py:57-76`（概率更新），`envs/sonar_model.py:13-16`（已添加 `get_detection_probability` 方法，等待调用）。
+概率更新已升级为距离相关的真贝叶斯：探测到 → `P_detect(d)`，未探测到 → `1 - P_detect(d)`。近处高置信、远处保留怀疑。实现于 `info_map._bayesian_update()`，连续环境自动启用，网格环境回退旧启发式。
 
 ### 当前阶段（其他待改进项）
 

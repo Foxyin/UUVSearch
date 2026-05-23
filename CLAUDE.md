@@ -74,18 +74,25 @@ tensorboard --logdir experiments/logs/
 
 ## 已知局限
 
-1. **概率更新为简化启发式**（×0.5/×2.0），非真贝叶斯。`sonar_model.get_detection_probability(distance)`已就绪待调用
-2. 单地图训练（SquareMap seed=42）
-3. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
-4. DQN success_rate在ε触底后从峰值回落（92%→77%），需调整ε_min或探索策略
+1. 单地图训练（SquareMap seed=42）
+2. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
+3. DQN/SAC确定性策略远弱于带探索策略，需进一步调参
 
-## 基线性能 (continuous env, seed=42, max_steps=300)
+## 基线性能 (continuous env, seed=42, max_steps=300, 真贝叶斯)
 
 | 算法 | 成功率 | 平均步数 | 说明 |
 |------|--------|----------|------|
-| Random | 80% | 124 | 下界 |
-| GreedyProb | 87% | 81 | 信息驱动（修复后） |
-| Lawnmower | 100% | 35 | 上界（需完整地图） |
+| Random | 87% | 103 | 下界 |
+| GreedyProb | 83% | 91 | 信息驱动 |
+| Lawnmower | 97% | 55 | 上界（需完整地图） |
+
+## 已实现的重要改进
+
+- 真贝叶斯更新：`info_map._bayesian_update()`，连续环境自动启用（`sonar.get_detection_probability(d)`驱动）
+- 碰撞防夹缝：对角线移动检查侧邻格 + 物理坐标出界检测
+- 碰撞脱困：随机旋转90-180°打破死循环
+- DQN ε线性衰减 + SAC梯度裁剪α钳位
+- 观测含障碍物通道（4 patch = 487维）
 
 ## 注意事项
 
