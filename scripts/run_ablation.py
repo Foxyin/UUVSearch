@@ -51,8 +51,8 @@ ABLATION_GROUPS = {
         "coverage_gain": 0.0,
         "revisit_gain": 0.0,
         "find_target": 100.0,
-        "collision_penalty": 0.0,
-        "step_penalty": 0.0
+        "collision_penalty": -1.0,    # 保留基本负反馈，否则无法避开障碍物
+        "step_penalty": -0.01         # 保留微小步数惩罚，鼓励效率
     }
 }
 
@@ -62,7 +62,7 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
     algo_config = load_config(f"config/algo/{algo_name}.yaml")
 
     env_config["rewards"] = rewards
-    env_config["simulation"]["max_steps"] = 200
+    # max_steps 沿用 YAML 配置值（当前为 800），不再硬编码覆盖
 
     full_config = {**env_config, "algo": algo_config, "simulation": env_config["simulation"]}
     full_config["total_steps"] = total_steps
