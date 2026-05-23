@@ -34,3 +34,10 @@ Thumbs.db
 # TensorBoard logs
 experiments/logs/
 *.tfevents.*
+
+# Experiment outputs (not tracked)
+experiments/figures/
+experiments/ablation/
+
+# Claude Code config
+.claude/
