@@ -36,7 +36,6 @@ class Evaluator:
                 state = self.env.auv_state.copy()
                 trajectory.append(state)
                 obs, reward, terminated, truncated, info = self.env.step(action)
-                # 记录这一步的实际 FOV
                 r = int(state[1] / self.env.map.resolution)
                 c = int(state[0] / self.env.map.resolution)
                 hdg = np.rad2deg(state[2]) % 360
@@ -44,6 +43,13 @@ class Evaluator:
                 fov_history.append(fov_cells)
                 done = terminated or truncated
                 step_count += 1
+
+            # 记录最终位置（找到目标或超时时的位置）
+            trajectory.append(self.env.auv_state.copy())
+            r = int(self.env.auv_state[1] / self.env.map.resolution)
+            c = int(self.env.auv_state[0] / self.env.map.resolution)
+            hdg = np.rad2deg(self.env.auv_state[2]) % 360
+            fov_history.append(self.env.sonar.get_fov_cells((r, c), hdg, self.env.map.grid))
 
             success = self.env.found
             coverage = self.env.info_map.coverage.mean()

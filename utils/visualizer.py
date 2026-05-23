@@ -30,22 +30,14 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
     plt.plot(target_x, target_y, 'y*', markersize=15, label='Target')
 
-    # 显示关键位置的实际 FOV 格子（开始、中间、结束）
+    # 终点位置的实际 FOV 格子（考虑遮挡）
     if fov_cells_list and sonar_range is not None:
-        key_indices = [0, len(fov_cells_list) // 2, len(fov_cells_list) - 1]
-        for idx in key_indices:
-            if idx < len(fov_cells_list) and idx < len(x):
-                for (fr, fc) in fov_cells_list[idx]:
-                    rx = fc * resolution
-                    ry = fr * resolution
-                    rect = plt.Rectangle((rx, ry), resolution, resolution,
-                                         facecolor='lime', alpha=0.12, edgecolor='none')
-                    plt.gca().add_patch(rect)
-                # 声呐虚线框
-                circle = plt.Circle((x[idx], y[idx]), sonar_range * resolution,
-                                    facecolor='none', edgecolor='cyan',
-                                    linewidth=0.3, linestyle='--')
-                plt.gca().add_patch(circle)
+        for (fr, fc) in fov_cells_list[-1]:
+            rx = fc * resolution
+            ry = fr * resolution
+            rect = plt.Rectangle((rx, ry), resolution, resolution,
+                                 facecolor='lime', alpha=0.15, edgecolor='none')
+            plt.gca().add_patch(rect)
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
     plt.title(title)

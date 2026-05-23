@@ -151,7 +151,7 @@ class SACAgent:
         self.critic2.load_state_dict(checkpoint['critic2'])
         self.target_critic1.load_state_dict(checkpoint['target_critic1'])
         self.target_critic2.load_state_dict(checkpoint['target_critic2'])
-        self.log_alpha = checkpoint['log_alpha'].to(self.device).requires_grad_()
+        self.log_alpha.data.copy_(checkpoint['log_alpha'])
         self.alpha_optimizer.load_state_dict(checkpoint['alpha_optimizer'])
         self.actor_optimizer.load_state_dict(checkpoint['actor_optimizer'])
         self.critic_optimizer.load_state_dict(checkpoint['critic_optimizer'])
