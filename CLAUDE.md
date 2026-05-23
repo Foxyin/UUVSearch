@@ -31,8 +31,8 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 - **观测空间**: 4个11×11 patch（coverage+uncertainty+probability+obstacle, 484维）+ 归一化状态3维 = 487维
 - **连续环境**: 5个航向变化动作[-90°, -45°, 0°, +45°, +90°], time_step=30s→30m/步=1格
 - **奖励**: coverage_gain=1.0, revisit_gain=0.1, find_target=100, collision=-2.0, step_penalty=-0.05
-- **DQN ε**: 线性衰减, epsilon_decay_steps=150000 (1.0→0.05)
-- **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位≤10, τ=0.003
+- **DQN ε**: 线性衰减, epsilon_decay_steps=300000 (1.0→0.1)
+- **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位[0.01, 10], τ=0.003
 - **碰撞**: 回退原位 + 随机旋转90-180°打破死循环
 - **声呐heading**: `np.rad2deg(psi) % 360`（与运动方向同向，无取负号）
 - **固定目标**: uncertainty_decay=1.0（不恢复，已扫区域确信无目标）
@@ -43,8 +43,8 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 
 ```bash
 # 训练（所有脚本从项目根目录运行）
-python scripts/train_dqn.py --exp-name dqn_v4 --total-steps 200000
-python scripts/train_sac.py --exp-name sac_v4 --total-steps 200000
+python scripts/train_dqn.py --exp-name dqn_v5 --total-steps 400000
+python scripts/train_sac.py --exp-name sac_v5 --total-steps 400000
 
 # 评估
 python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/<path>/step_XXXXX.pt --episodes 100
@@ -68,8 +68,8 @@ tensorboard --logdir experiments/logs/
 |-----|------|----------|
 | train/success_rate | 最近100回合滑动成功率 | 0→应上升至80%+ |
 | train/episode_reward | 每回合累计奖励 | -1000(全撞墙)→应转正 |
-| train/epsilon | DQN探索率 | 1.0→0.05线性下降 |
-| train/alpha | SAC熵温度 | 0.2→应稳定在0.5-10之间 |
+| train/epsilon | DQN探索率 | 1.0→0.1线性下降 |
+| train/alpha | SAC熵温度 | 0.2→应稳定在0.01-10之间 |
 | train/loss_critic | SAC Critic MSE | <100为佳，找到目标时会尖峰 |
 
 ## 已知局限
@@ -82,9 +82,9 @@ tensorboard --logdir experiments/logs/
 
 | 算法 | 成功率 | 平均步数 | 说明 |
 |------|--------|----------|------|
-| Random | 87% | 103 | 下界 |
-| GreedyProb | 83% | 91 | 信息驱动 |
-| Lawnmower | 97% | 55 | 上界（需完整地图） |
+| Random | 80% | 116 | 下界 |
+| GreedyProb | 90% | 78 | 信息驱动 |
+| Lawnmower | 98% | 61 | 上界（需完整地图） |
 
 ## 已实现的重要改进
 

@@ -80,11 +80,11 @@ python scripts/run_experiment.py --env continuous --algo random --episodes 20 --
 ### 训练 RL 模型
 
 ```bash
-# 训练 DQN（建议 500k+ 步以获得收敛）
-python scripts/train_dqn.py --exp-name dqn_v2 --total-steps 200000
+# 训练 DQN
+python scripts/train_dqn.py --exp-name dqn_v5 --total-steps 400000
 
 # 训练 SAC
-python scripts/train_sac.py --exp-name sac_v2 --total-steps 200000
+python scripts/train_sac.py --exp-name sac_v5 --total-steps 400000
 
 # 查看训练曲线（含 success_rate）
 tensorboard --logdir experiments/logs/
@@ -94,11 +94,11 @@ tensorboard --logdir experiments/logs/
 
 ```bash
 # 评估 SAC 在正方形地图上的表现
-python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v4/step_50000.pt   --episodes 100
+python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v5/step_400000.pt --episodes 100
 
 # 评估在非规则多边形上的泛化能力
 python scripts/evaluate.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v2/step_200000.pt \
+  --checkpoint experiments/checkpoints/sac_v5/step_400000.pt \
   --env-config config/env/continuous_irregular.yaml --episodes 50
 ```
 
@@ -119,7 +119,7 @@ python scripts/plot_results.py --csv experiments/ablation/results_sac.csv
 
 ```bash
 python scripts/render_episode.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v2/step_200000.pt \
+  --checkpoint experiments/checkpoints/sac_v5/step_400000.pt \
   --max-steps 200
 ```
 
@@ -133,7 +133,7 @@ python scripts/render_episode.py --algo sac \
 | **不确定度图** | 对环境的未知程度 | 探测后归零（当前不随时间增长） |
 | **目标概率图** | 目标在各位置的后验概率 | 简化更新：探测到 ×2，未探测 ×0.5，全局归一化 |
 
-> **注意**：概率更新是简化启发式，非严格贝叶斯推断。因子 0.5/2.0 与声呐传感器模型无直接关联。论文中应明确标注此简化假设。
+> **注意**：概率更新已升级为距离相关真贝叶斯（连续环境），网格环境保留旧启发式作为回退。
 
 ### 奖励函数（连续环境）
 
