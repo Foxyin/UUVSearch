@@ -25,15 +25,23 @@ class Evaluator:
         }
 
         for ep in range(num_episodes):
-            obs, info = self.env.reset(seed=ep)  # 固定种子可复现
-            trajectory = []       # 记录 (x, y) 位置
+            obs, info = self.env.reset(seed=ep)
+            trajectory = []
+            fov_history = []     # 每步的实际 FOV 格子列表
             done = False
             step_count = 0
 
             while not done and step_count < self.max_steps:
                 action = self.agent.select_action(obs, deterministic=True)
-                trajectory.append(self.env.auv_state.copy())  # [x, y, psi]
+                state = self.env.auv_state.copy()
+                trajectory.append(state)
                 obs, reward, terminated, truncated, info = self.env.step(action)
+                # 记录这一步的实际 FOV
+                r = int(state[1] / self.env.map.resolution)
+                c = int(state[0] / self.env.map.resolution)
+                hdg = np.rad2deg(state[2]) % 360
+                fov_cells = self.env.sonar.get_fov_cells((r, c), hdg, self.env.map.grid)
+                fov_history.append(fov_cells)
                 done = terminated or truncated
                 step_count += 1
 
@@ -45,9 +53,8 @@ class Evaluator:
             results["coverage"].append(coverage)
             results["trajectories"].append(np.array(trajectory))
 
-            # 定期保存图片
             if (ep + 1) % save_fig_every == 0 or ep == 0:
-                self._save_plots(ep, trajectory, success, step_count)
+                self._save_plots(ep, trajectory, success, step_count, fov_history)
 
         # 统计
         success_array = np.array(results["success"])
@@ -68,17 +75,16 @@ class Evaluator:
             "avg_coverage": avg_coverage
         }
 
-    def _save_plots(self, episode, trajectory, success, step_count):
-        """保存三张关键图"""
+    def _save_plots(self, episode, trajectory, success, step_count, fov_history=None):
         x, y = zip(*[(p[0], p[1]) for p in trajectory])
 
-        # 轨迹图
         target_x = (self.env.target_pos_grid[1] + 0.5) * self.env.map.resolution
         target_y = (self.env.target_pos_grid[0] + 0.5) * self.env.map.resolution
         plot_trajectory(x, y, target_x, target_y,
                         grid=self.env.map.grid,
                         resolution=self.env.map.resolution,
                         sonar_range=self.env.sonar.max_range,
+                        fov_cells_list=fov_history,
                         title=f"Trajectory Episode {episode+1} ({'Found' if success else 'Not Found'}, Steps={step_count})",
                         save_path=os.path.join(self.fig_dir, f"trajectory_ep{episode+1}.png"))
 

@@ -9,8 +9,8 @@ import numpy as np
 
 
 def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
-                    sonar_range=None, title="Trajectory", save_path=None):
-    """绘制AUV运动轨迹，可选叠加障碍物背景和声呐范围"""
+                    sonar_range=None, fov_cells_list=None, title="Trajectory", save_path=None):
+    """绘制AUV运动轨迹，可选叠加障碍物背景和实际FOV格子（含遮挡）"""
     plt.figure(figsize=(8, 6))
 
     rows, cols = (0, 0)
@@ -30,12 +30,22 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
     plt.plot(target_x, target_y, 'y*', markersize=15, label='Target')
 
-    # 声呐范围：在终点位置画一个半透明圆，表示最后探测区域
-    if sonar_range is not None:
-        sonar_radius = sonar_range * resolution
-        circle = plt.Circle((x[-1], y[-1]), sonar_radius,
-                            facecolor='cyan', alpha=0.15, edgecolor='cyan', linewidth=0.5)
-        plt.gca().add_patch(circle)
+    # 显示关键位置的实际 FOV 格子（开始、中间、结束）
+    if fov_cells_list and sonar_range is not None:
+        key_indices = [0, len(fov_cells_list) // 2, len(fov_cells_list) - 1]
+        for idx in key_indices:
+            if idx < len(fov_cells_list) and idx < len(x):
+                for (fr, fc) in fov_cells_list[idx]:
+                    rx = fc * resolution
+                    ry = fr * resolution
+                    rect = plt.Rectangle((rx, ry), resolution, resolution,
+                                         facecolor='lime', alpha=0.12, edgecolor='none')
+                    plt.gca().add_patch(rect)
+                # 声呐虚线框
+                circle = plt.Circle((x[idx], y[idx]), sonar_range * resolution,
+                                    facecolor='none', edgecolor='cyan',
+                                    linewidth=0.3, linestyle='--')
+                plt.gca().add_patch(circle)
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
     plt.title(title)

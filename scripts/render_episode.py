@@ -79,9 +79,11 @@ def main():
     ax.plot(target_x, target_y, 'y*', markersize=15, label='Target')
     traj_line, = ax.plot([], [], 'b-', linewidth=1.5, label='Path')
     auv_marker, = ax.plot([], [], 'ro', markersize=8, label='AUV')
+    # 声呐最大范围虚线框（参考线）
     sonar_circle = plt.Circle((0, 0), env.sonar.max_range * env.map.resolution,
-                              facecolor='cyan', alpha=0.15, edgecolor='cyan', linewidth=0.5)
+                              facecolor='none', edgecolor='cyan', linewidth=0.5, linestyle='--')
     ax.add_patch(sonar_circle)
+    fov_patches = []  # 实际扫到的格子（考虑遮挡）
     ax.legend()
 
     while not done and step < args.max_steps:
@@ -96,9 +98,24 @@ def main():
 
         traj_line.set_data(xs, ys)
         auv_marker.set_data([x], [y])
-        # 更新声呐范围圈
         sonar_circle.set_center((x, y))
-        sonar_r = env.sonar.max_range * env.map.resolution
+
+        # 实际 FOV 格子（考虑遮挡），用半透明绿色方块显示
+        for p in fov_patches:
+            p.remove()
+        fov_patches.clear()
+        grid_r = int(y / env.map.resolution)
+        grid_c = int(x / env.map.resolution)
+        heading_deg = np.rad2deg(env.auv_state[2]) % 360
+        fov_cells = env.sonar.get_fov_cells((grid_r, grid_c), heading_deg, env.map.grid)
+        for (fr, fc) in fov_cells:
+            rx = fc * env.map.resolution
+            ry = fr * env.map.resolution
+            rect = plt.Rectangle((rx, ry), env.map.resolution, env.map.resolution,
+                                 facecolor='lime', alpha=0.15, edgecolor='none')
+            ax.add_patch(rect)
+            fov_patches.append(rect)
+
         ax.set_title(f"Step: {step} | Reward: {reward:.1f}"
                      f"{' | FOUND!' if env.found else ''}")
 
