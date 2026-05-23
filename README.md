@@ -144,7 +144,7 @@ python scripts/render_episode.py --algo sac \
 | `full`                  | 1.0 | 0.1 | 100 | -2.0 | -0.05 |
 | `no_exploration_reward` | 0 | 0 | 100 | -2.0 | -0.05 |
 | `no_target_reward`      | 1.0 | 0.1 | 0 | -2.0 | -0.05 |
-| `target_reward_only`    | 0 | 0 | 100 | 0 | 0 |
+| `target_reward_only`    | 0 | 0 | 100 | -1.0 | -0.01 |
 
 ### 观测空间
 
@@ -154,15 +154,15 @@ RL 智能体的观测由三部分组成：
 - **局部概率 patcher**：同上
 - **归一化状态向量**：[x/map_length, y/map_length, psi/2π]
 
-拼接为扁平向量，输入维度 = 3×(2R+1)² + 3（默认 R=5，共 366 维）。
+拼接为扁平向量，输入维度 = 4×(2R+1)² + 3（4 patch + 状态，默认 R=5，共 487 维）。
 
 ### 环境对比
 
 | | 网格环境 (GridEnv) | 连续环境 (ContinuousSearchEnv) |
 |---|---|---|
-| **运动** | 逐格移动 | 一阶运动学（v·dt = 60m/步） |
+| **运动** | 逐格移动 | 一阶运动学（v·dt = 30m/步） |
 | **动作** | 8 方向（罗盘） | 5 航向变化（-90°~+90°） |
-| **观测** | dict（含 auv_pos, coverage 等） | 1D array（366 维 patch） |
+| **观测** | dict（含 auv_pos, coverage 等） | 1D array（487 维，4 patch） |
 | **用途** | 传统算法快速验证 | RL 训练 + 正式实验 |
 | **Gymnasium** | ✅ 继承 gym.Env | ✅ 继承 gym.Env |
 

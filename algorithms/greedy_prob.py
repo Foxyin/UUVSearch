@@ -93,14 +93,16 @@ class GreedyProbSearch(BaseAlgorithm):
             # 按概率降序排序，选第一个可达的自由格子
             flat_indices = np.argsort(prob_patch.flatten())[::-1]
             r, c = pos
+            target_r, target_c = r, c  # fallback：无自由格时原地不动
             for idx in flat_indices:
                 dr = idx // patch_side - patch_side // 2
                 dc = idx % patch_side - patch_side // 2
-                target_r = r + dr
-                target_c = c + dc
-                if (0 <= target_r < self.map_obj.size and 0 <= target_c < self.map_obj.size
-                        and self.map_obj.is_free(target_r, target_c)):
-                    break  # 找到可达自由格子
+                tr = r + dr
+                tc = c + dc
+                if (0 <= tr < self.map_obj.size and 0 <= tc < self.map_obj.size
+                        and self.map_obj.is_free(tr, tc)):
+                    target_r, target_c = tr, tc
+                    break
 
             target_x = (target_c + 0.5) * self.resolution
             target_y = (target_r + 0.5) * self.resolution

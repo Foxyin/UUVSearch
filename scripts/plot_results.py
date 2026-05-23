@@ -12,7 +12,7 @@ import numpy as np
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv", type=str, default="experiments/ablation/results.csv")
+    parser.add_argument("--csv", type=str, default="experiments/ablation/results_sac.csv")
     args = parser.parse_args()
 
     df = pd.read_csv(args.csv)

@@ -107,9 +107,8 @@ class ContinuousSearchEnv(gym.Env):
             obs = self._get_observation()
             return obs, reward, terminated, self.step_count >= self.max_steps, {"collision": True}
 
-        # 声呐坐标系：0°=右, 90°=下（屏幕/网格方向）
-        # psi 是数学约定（0=右, CCW 为正），需取负号转换
-        heading_deg = (-np.rad2deg(psi)) % 360
+        # psi 与声呐 heading 在 grid 坐标系下天然对齐（y 轴向下）
+        heading_deg = np.rad2deg(psi) % 360
         fov_cells = self.sonar.get_fov_cells((grid_r, grid_c), heading_deg, self.map.grid)
 
         target_detected = self.target_pos_grid in fov_cells

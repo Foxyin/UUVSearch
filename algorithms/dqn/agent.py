@@ -14,9 +14,10 @@ class DQNAgent:
         self.action_dim = action_dim
         # 显式类型转换，防止YAML字符串问题
         self.gamma = float(config.get("gamma", 0.99))
-        self.epsilon = float(config.get("epsilon_start", 1.0))
+        self.epsilon_start = float(config.get("epsilon_start", 1.0))
         self.epsilon_min = float(config.get("epsilon_min", 0.05))
         self.epsilon_decay_steps = int(config.get("epsilon_decay_steps", 50000))
+        self.epsilon = self.epsilon_start
         self.batch_size = int(config.get("batch_size", 64))
         self.learn_start = int(config.get("learn_start", 1000))
         lr = float(config.get("lr", 1e-4))
@@ -64,9 +65,9 @@ class DQNAgent:
         loss.backward()
         self.optimizer.step()
 
-        # 线性衰减 epsilon：从 1.0 到 epsilon_min，在 decay_steps 步内完成
+        # 线性衰减 epsilon：从 epsilon_start 到 epsilon_min，在 decay_steps 步内完成
         self.epsilon = max(self.epsilon_min,
-                           1.0 - (1.0 - self.epsilon_min) * self.steps / self.epsilon_decay_steps)
+                           self.epsilon_start - (self.epsilon_start - self.epsilon_min) * self.steps / self.epsilon_decay_steps)
         self.steps += 1
         if self.steps % self.update_target_every == 0:
             self.target_net.load_state_dict(self.q_net.state_dict())

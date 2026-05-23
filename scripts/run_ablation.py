@@ -62,7 +62,7 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
     algo_config = load_config(f"config/algo/{algo_name}.yaml")
 
     env_config["rewards"] = rewards
-    # max_steps 沿用 YAML 配置值（当前为 800），不再硬编码覆盖
+    # max_steps 沿用 YAML 配置值（当前为 300），不再硬编码覆盖
 
     full_config = {**env_config, "algo": algo_config, "simulation": env_config["simulation"]}
     full_config["total_steps"] = total_steps
