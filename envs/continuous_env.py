@@ -93,8 +93,10 @@ class ContinuousSearchEnv(gym.Env):
         grid_r = int(y / self.map.resolution)
         grid_c = int(x / self.map.resolution)
 
-        # 检查目标格
-        if not (0 <= grid_r < self.map.size and 0 <= grid_c < self.map.size):
+        # 先用物理坐标检查是否真的出界（int 截断会绕过负坐标检查）
+        if x < 0 or y < 0 or x >= self.map.length or y >= self.map.length:
+            collision = True
+        elif not (0 <= grid_r < self.map.size and 0 <= grid_c < self.map.size):
             collision = True
         elif self.map.grid[grid_r, grid_c] == 1:
             collision = True

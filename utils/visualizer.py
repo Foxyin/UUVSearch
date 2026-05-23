@@ -30,18 +30,11 @@ def plot_trajectory(x, y, target_x, target_y, grid=None, resolution=30.0,
     plt.plot(x[-1], y[-1], 'ro', markersize=8, label='End')
     plt.plot(target_x, target_y, 'y*', markersize=15, label='Target')
 
-    # 声呐范围：在终点位置画一个半透明圆
+    # 声呐范围：在终点位置画一个半透明圆，表示最后探测区域
     if sonar_range is not None:
         sonar_radius = sonar_range * resolution
-        # 每隔 20 步画一个声呐圈，避免太密
-        step_interval = max(1, len(x) // 15)
-        for i in range(0, len(x), step_interval):
-            circle = plt.Circle((x[i], y[i]), sonar_radius,
-                                facecolor='cyan', alpha=0.08, edgecolor='none')
-            plt.gca().add_patch(circle)
-        # 终点画深色的
         circle = plt.Circle((x[-1], y[-1]), sonar_radius,
-                            facecolor='cyan', alpha=0.2, edgecolor='cyan', linewidth=0.5)
+                            facecolor='cyan', alpha=0.15, edgecolor='cyan', linewidth=0.5)
         plt.gca().add_patch(circle)
     plt.xlabel('X (m)')
     plt.ylabel('Y (m)')
