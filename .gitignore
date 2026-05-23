@@ -30,6 +30,8 @@ Thumbs.db
 # Model checkpoints (large files)
 *.pt
 *.pth
+*.gif
+*.mp4
 
 # TensorBoard logs
 experiments/logs/
