@@ -172,15 +172,18 @@ def main():
         ani = animation.FuncAnimation(fig, draw_frame, frames=frames_data,
                                       interval=200, blit=False, repeat=False)
         if video_path.endswith('.mp4'):
-            # 指向 conda 环境中的 ffmpeg
             ffmpeg_path = os.path.join(os.path.dirname(sys.executable), 'Library', 'bin', 'ffmpeg.exe')
             if os.path.exists(ffmpeg_path):
                 matplotlib.rcParams['animation.ffmpeg_path'] = ffmpeg_path
-            ani.save(video_path, writer='ffmpeg', fps=5, dpi=150)
+            try:
+                ani.save(video_path, writer='ffmpeg', fps=5, dpi=150)
+            except (ValueError, FileNotFoundError):
+                video_path = video_path.rsplit('.', 1)[0] + '.gif'
+                ani.save(video_path, writer='pillow', fps=8, dpi=150)
         else:
             if not video_path.endswith('.gif'):
                 video_path = video_path.rsplit('.', 1)[0] + '.gif'
-            ani.save(video_path, writer='pillow', fps=4, dpi=150)
+            ani.save(video_path, writer='pillow', fps=8, dpi=150)
         print(f"动画已保存: {video_path}")
     elif not args.save_video:
         plt.ioff()

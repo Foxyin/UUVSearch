@@ -141,9 +141,9 @@ python scripts/render_episode.py --algo sac \
 
 | 配置 | coverage_gain | revisit_gain | find_target | collision_penalty | step_penalty |
 |------|:---:|:---:|:---:|:---:|:---:|
-| `full`                  | 1.0 | 0.1 | 100 | -2.0 | -0.05 |
+| `full`                  | 1.0 | 0.0 | 100 | -2.0 | -0.05 |
 | `no_exploration_reward` | 0 | 0 | 100 | -2.0 | -0.05 |
-| `no_target_reward`      | 1.0 | 0.1 | 0 | -2.0 | -0.05 |
+| `no_target_reward`      | 1.0 | 0.0 | 0 | -2.0 | -0.05 |
 | `target_reward_only`    | 0 | 0 | 100 | -1.0 | -0.01 |
 
 ### 观测空间

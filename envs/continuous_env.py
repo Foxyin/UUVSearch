@@ -147,7 +147,7 @@ class ContinuousSearchEnv(gym.Env):
                             revisit_count += 1
 
             reward = (self.reward_weights.get("coverage_gain", 1.0) * new_count +
-                      self.reward_weights.get("revisit_gain", 0.1) * revisit_count +
+                      self.reward_weights.get("revisit_gain", 0.0) * revisit_count +
                       self.reward_weights.get("step_penalty", -0.05))
 
         self.step_count += 1

@@ -30,7 +30,7 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 
 - **观测空间**: 4个11×11 patch（coverage+uncertainty+probability+obstacle, 484维）+ 归一化状态3维 = 487维
 - **连续环境**: 5个航向变化动作[-90°, -45°, 0°, +45°, +90°], time_step=30s→30m/步=1格
-- **奖励**: coverage_gain=1.0, revisit_gain=0.1, find_target=100, collision=-2.0, step_penalty=-0.05
+- **奖励**: coverage_gain=1.0, revisit_gain=0.0, find_target=100, collision=-2.0, step_penalty=-0.05
 - **DQN ε**: 线性衰减, epsilon_decay_steps=300000 (1.0→0.1)
 - **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位[0.01, 10], τ=0.003
 - **碰撞**: 回退原位 + 随机旋转90-180°打破死循环

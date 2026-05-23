@@ -39,7 +39,7 @@ obs_patch_radius: 5
 
 rewards:
   coverage_gain: 1.0
-  revisit_gain: 0.1
+  revisit_gain: 0.0
   find_target: 100.0
   collision_penalty: -2.0
   step_penalty: -0.05

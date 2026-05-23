@@ -28,7 +28,7 @@ from trainers.evaluator import Evaluator
 ABLATION_GROUPS = {
     "full": {
         "coverage_gain": 1.0,
-        "revisit_gain": 0.1,
+        "revisit_gain": 0.0,
         "find_target": 100.0,
         "collision_penalty": -2.0,
         "step_penalty": -0.05
@@ -42,7 +42,7 @@ ABLATION_GROUPS = {
     },
     "no_target_reward": {
         "coverage_gain": 1.0,
-        "revisit_gain": 0.1,
+        "revisit_gain": 0.0,
         "find_target": 0.0,
         "collision_penalty": -2.0,
         "step_penalty": -0.05

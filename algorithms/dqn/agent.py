@@ -63,6 +63,7 @@ class DQNAgent:
         loss = F.mse_loss(current_q, target_q)
         self.optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.q_net.parameters(), max_norm=10.0)
         self.optimizer.step()
 
         # 线性衰减 epsilon：从 epsilon_start 到 epsilon_min，在 decay_steps 步内完成
