@@ -85,9 +85,10 @@ class GreedyProbSearch(BaseAlgorithm):
             cur_x = x_norm * self.map_length
             cur_y = y_norm * self.map_length
 
-            # 从概率 patch 找最高点
-            patch_side = int(np.sqrt((len(obs) - 3) / 3))
-            prob_start = 2 * patch_side * patch_side
+            # 观测结构: [cov, unc, prob, obstacle] × patch + [x, y, psi]
+            n_patches = 4  # coverage + uncertainty + probability + obstacle
+            patch_side = int(np.sqrt((len(obs) - 3) / n_patches))
+            prob_start = 2 * patch_side * patch_side  # 第 3 个 patch (0-indexed=2)
             prob_patch = obs[prob_start:prob_start + patch_side * patch_side].reshape(patch_side, patch_side)
 
             # 按概率降序排序，选第一个可达的自由格子

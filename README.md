@@ -148,10 +148,11 @@ python scripts/render_episode.py --algo sac \
 
 ### 观测空间
 
-RL 智能体的观测由三部分组成：
-- **局部覆盖图 patcher**：(2R+1)×(2R+1) 的 coverage 矩阵
-- **局部不确定度 patcher**：同上
-- **局部概率 patcher**：同上
+RL 智能体的观测由四个局部 patch 和归一化状态组成：
+- **局部覆盖图 patch**：(2R+1)×(2R+1) 的 coverage 矩阵
+- **局部不确定度 patch**：同上
+- **局部概率 patch**：同上
+- **局部障碍物 patch**：同上（短程避障声呐，论文中需标注为 privileged information）
 - **归一化状态向量**：[x/map_length, y/map_length, psi/2π]
 
 拼接为扁平向量，输入维度 = 4×(2R+1)² + 3（4 patch + 状态，默认 R=5，共 487 维）。
