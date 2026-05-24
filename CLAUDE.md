@@ -95,9 +95,11 @@ tensorboard --logdir experiments/logs/
 
 **现象**：离散SAC的训练success_rate（multinomial采样）与deterministic评估（argmax）之间存在系统性偏差。v6（target_entropy_scale=0.3）下gap约7%，训练sr 99%但deterministic仅92%。
 
-**原理**：auto-alpha将策略熵维持在target_entropy附近。scale=0.3时target_entropy≈0.483，softmax分布不够尖锐——训练时multinomial采样可"赌对"次优动作掩盖分布平坦，评估时argmax只取概率最高动作，暴露了分布的不确定性。
+**原理**：auto-alpha的梯度为`policy_entropy - target_entropy`。当策略熵低于目标时，alpha上升增加熵正则化权重，推高策略随机性；反之则降低。scale=0.3时target_entropy≈0.483，alpha收敛至0.46，softmax分布不够尖锐——训练时multinomial采样可"赌对"次优动作掩盖分布平坦，评估时argmax只取概率最高动作，暴露了分布的不确定性。
 
-**解决**：将target_entropy_scale从0.3降至0.2（target_entropy≈0.322），alpha收敛至0.42。策略分布更尖锐，training-eval gap从7%缩至3%。v7采用0.2+`>=`保存逻辑，deterministic达到94%（vs v6的92%），步数46优于v6的69。DQN 95% vs SAC 94%，差距仅1个百分点。
+**解决**：将target_entropy_scale从0.3降至0.2（target_entropy≈0.322），alpha从0.40缓慢上升至0.42（增量放缓：+0.090→+0.066→+0.047，向平衡点逼近）。策略分布更尖锐，training-eval gap从7%缩至3%。v7采用0.2+`>=`保存逻辑，deterministic达到94%（vs v6的92%），步数46优于v6的69。DQN 95% vs SAC 94%，差距仅1个百分点。
+
+**trade-off**：ent=0.2使策略更快收敛到确定性行为、缩小了gap，但也限制了后期通过探索突破天花板的能力，导致training sr在20万步后进入平台期（97%）。离散SAC的entropy调节存在**收敛速度-评估一致性**的权衡——这在论文中是方法层面的洞察而非弱点。
 
 ## 已实现的重要改进
 
