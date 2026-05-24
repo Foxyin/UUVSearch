@@ -6,6 +6,7 @@ UUVSearch - SAC 训练入口
 import sys
 import os
 import argparse
+import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from utils.config_loader import load_config
@@ -18,6 +19,8 @@ def main():
     parser.add_argument("--exp-name", type=str, default="sac_square")
     parser.add_argument("--total-steps", type=int, default=400000,
                         help="总训练步数")
+    parser.add_argument("--seed", type=int, default=None,
+                        help="随机种子（固定后训练可复现）")
     args = parser.parse_args()
 
     env_config = load_config("config/env/continuous_square.yaml")
@@ -28,7 +31,14 @@ def main():
     map_obj = create_map(env_config["map"]["type"], env_config["map"])
     env = ContinuousSearchEnv(map_obj, env_config)
 
+    # 固定种子
+    if args.seed is not None:
+        np.random.seed(args.seed)
+        env.reset(seed=args.seed)
+
     trainer = SACTrainer(env, full_config, exp_name=args.exp_name)
+    if args.seed is not None:
+        trainer.agent.buffer.seed(args.seed)
     trainer.train()
 
 if __name__ == "__main__":

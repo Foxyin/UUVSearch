@@ -33,7 +33,6 @@ sonar:
 
 info_map:
   kappa_max: 1.0
-  growth_factor: 50
 
 obs_patch_radius: 5
 

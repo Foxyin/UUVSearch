@@ -47,7 +47,7 @@ class LawnmowerSearch(BaseAlgorithm):
         waypoints = []
         row = 1
         direction = 1
-        while row < rows - 1:
+        while row < rows:
             if direction == 1:
                 col_range = range(1, cols - 1)
             else:
@@ -71,9 +71,9 @@ class LawnmowerSearch(BaseAlgorithm):
         if isinstance(obs, dict):
             return obs["auv_pos"]
 
-        # 连续环境：obs 为 1D numpy array，最后 3 个元素是归一化状态
-        x_norm = float(obs[-3])
-        y_norm = float(obs[-2])
+        # 连续环境：obs 尾部为 [x_norm, y_norm, sin_psi, cos_psi]
+        x_norm = float(obs[-4])
+        y_norm = float(obs[-3])
         r = int(y_norm * self.map_length / self.resolution)
         c = int(x_norm * self.map_length / self.resolution)
         return (r, c)
@@ -82,8 +82,9 @@ class LawnmowerSearch(BaseAlgorithm):
         """从连续观测中提取 AUV 航向（弧度），网格环境返回 None"""
         if isinstance(obs, dict):
             return None
-        psi_norm = float(obs[-1])
-        return psi_norm * 2 * np.pi - np.pi
+        sin_psi = float(obs[-2])
+        cos_psi = float(obs[-1])
+        return np.arctan2(sin_psi, cos_psi)
 
     def _is_continuous(self, obs):
         return not isinstance(obs, dict)

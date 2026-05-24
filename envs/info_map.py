@@ -22,7 +22,6 @@ class InfoMap:
         self.probability = np.zeros(self.shape, dtype=np.float32)
         self.probability[mask] = 1.0 / np.sum(mask)
 
-        self.growth_factor = config.get("growth_factor", 50)
         self.uncertainty_decay = config.get("uncertainty_decay", 1.0)
         self._update_counter = 0
 

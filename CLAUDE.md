@@ -28,13 +28,13 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 
 ## Key Design Decisions
 
-- **观测空间**: 4个11×11 patch（coverage+uncertainty+probability+obstacle, 484维）+ 归一化状态3维 = 487维
+- **观测空间**: 4个11×11 patch（coverage+uncertainty+probability+obstacle, 484维）+ 状态4维（x_norm, y_norm, sin_psi, cos_psi）= 488维
 - **连续环境**: 5个航向变化动作[-90°, -45°, 0°, +45°, +90°], time_step=30s→30m/步=1格
 - **奖励**: coverage_gain=1.0, revisit_gain=0.0, find_target=100, collision=-2.0, step_penalty=-0.05
 - **DQN ε**: 线性衰减, epsilon_decay_steps=300000 (1.0→0.1)
 - **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位[0.01, 10], τ=0.003
 - **碰撞**: 回退原位 + 随机旋转90-180°打破死循环
-- **声呐heading**: `np.rad2deg(psi) % 360`（与运动方向同向，无取负号）
+- **航向编码**: `[sin(psi), cos(psi)]`（消除周期性不连续，替代归一化角度）
 - **固定目标**: uncertainty_decay=1.0（不恢复，已扫区域确信无目标）
 - **传统基线梯度**: Random（不用信息）→ GreedyProb（用概率图）→ Lawnmower（用完整地图，全覆盖上界）
 - **RL vs 传统对比**: 在同一ContinuousSearchEnv下进行。Lawnmower使用了完整地图是"作弊"上界
@@ -99,8 +99,8 @@ tensorboard --logdir experiments/logs/
 
 ## 注意事项
 
-- 观测结构: 4 patch (cov/unc/prob/obstacle) × 121 + 状态 × 3 = 487维
-- **GreedyProb 的观测解析公式必须为 `(len(obs)-3)/4`**（与观测patch数一致）
+- 观测结构: 4 patch (cov/unc/prob/obstacle) × 121 + 状态 × 4 = 488维
+- **GreedyProb 的观测解析公式必须为 `(len(obs)-4)/4`**（与观测patch数和4维状态一致）
 - 观测含障碍物通道（privileged避障信息，论文中需标注为"短程避障声呐"）
 - SquareMap._place_obstacles使用局部RandomState(42)，不影响全局种子
 - 网格环境与连续环境的动作空间不同（8方向 vs 5航向），实验对比以连续环境为准

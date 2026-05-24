@@ -87,10 +87,7 @@ class SonarModel:
         return fov_cells
 
     def _is_visible(self, r0, c0, r1, c1, grid):
-        """Bresenham直线检查，若路径上无障碍物则返回True"""
-        # 如果目标格本身就是障碍物，返回False（能探测到但不应标记为覆盖？实际声纳能探测到障碍物，
-        # 但信息图只关心自由区域，我们在此处把障碍物格也加入FOV，但info_map.update中会跳过障碍物）
-        # 我们先让射线穿过障碍物格即停止，且障碍物格本身也加入FOV（它们不是自由区域，不会被标记覆盖）
+        """Bresenham直线检查。路径上无障碍物→True；中途碰到障碍物→False（障碍物格不可见）"""
         r0, c0 = int(r0), int(c0)
         r1, c1 = int(r1), int(c1)
         if r0 == r1 and c0 == c1:

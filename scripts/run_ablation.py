@@ -97,7 +97,6 @@ def run_experiment(name, rewards, algo_name, total_steps, eval_episodes, seed):
         raise RuntimeError(f"checkpoint 未生成: {final_ckpt}")
 
     eval_env = ContinuousSearchEnv(map_obj, env_config)
-    eval_env.np_random = rng_state  # 评估环境也用相同种子
     obs_dim = eval_env.observation_space.shape[0]
     action_dim = eval_env.action_space.n
 

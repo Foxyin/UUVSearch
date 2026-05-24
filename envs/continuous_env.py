@@ -34,7 +34,7 @@ class ContinuousSearchEnv(gym.Env):
         patch_radius = config.get("obs_patch_radius", 5)
         patch_size = 2 * patch_radius + 1
         # 4 个 patch: coverage + uncertainty + probability + obstacle
-        obs_dim = 4 * patch_size * patch_size + 3
+        obs_dim = 4 * patch_size * patch_size + 4  # + x_norm, y_norm, sin(psi), cos(psi)
         kappa_max = info_cfg.get("kappa_max", 1.0)
         self.observation_space = spaces.Box(low=0, high=max(1.0, kappa_max),
                                             shape=(obs_dim,), dtype=np.float32)
@@ -182,14 +182,15 @@ class ContinuousSearchEnv(gym.Env):
 
         x_norm = x / self.map.length
         y_norm = y / self.map.length
-        psi_norm = (psi + np.pi) / (2 * np.pi)
+        sin_psi = np.sin(psi)
+        cos_psi = np.cos(psi)
 
         obs = np.concatenate([
             cov_patch.flatten(),
             unc_patch.flatten(),
             prob_patch.flatten(),
             obs_patch.flatten(),
-            [x_norm, y_norm, psi_norm]
+            [x_norm, y_norm, sin_psi, cos_psi]
         ]).astype(np.float32)
         return obs
 

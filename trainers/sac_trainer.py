@@ -16,7 +16,6 @@ class SACTrainer:
         self.max_steps = config["simulation"]["max_steps"]
         self.total_steps = config.get("total_steps", 100000)
         self.save_freq = config.get("save_freq", 20000)
-        self.log_freq = config.get("log_freq", 1000)
         self.checkpoint_dir = f"experiments/checkpoints/{exp_name}"
         os.makedirs(self.checkpoint_dir, exist_ok=True)
         self.logger = Logger(log_dir=f"experiments/logs/{exp_name}")

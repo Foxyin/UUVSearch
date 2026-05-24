@@ -43,8 +43,9 @@ class GreedyProbSearch(BaseAlgorithm):
     def _get_grid_pos(self, obs):
         if isinstance(obs, dict):
             return obs["auv_pos"]
-        x_norm = float(obs[-3])
-        y_norm = float(obs[-2])
+        # obs 尾部: [..., x_norm, y_norm, sin_psi, cos_psi]
+        x_norm = float(obs[-4])
+        y_norm = float(obs[-3])
         r = int(y_norm * self.map_length / self.resolution)
         c = int(x_norm * self.map_length / self.resolution)
         return (r, c)
@@ -79,15 +80,18 @@ class GreedyProbSearch(BaseAlgorithm):
                 self.stuck_counter = 0
                 return np.random.randint(0, self.num_actions)
 
-            x_norm = float(obs[-3])
-            y_norm = float(obs[-2])
-            psi = float(obs[-1]) * 2 * np.pi - np.pi
+            # obs 尾部: [..., x_norm, y_norm, sin_psi, cos_psi]
+            x_norm = float(obs[-4])
+            y_norm = float(obs[-3])
+            sin_psi = float(obs[-2])
+            cos_psi = float(obs[-1])
+            psi = np.arctan2(sin_psi, cos_psi)
             cur_x = x_norm * self.map_length
             cur_y = y_norm * self.map_length
 
-            # 观测结构: [cov, unc, prob, obstacle] × patch + [x, y, psi]
-            n_patches = 4  # coverage + uncertainty + probability + obstacle
-            patch_side = int(np.sqrt((len(obs) - 3) / n_patches))
+            # 观测结构: [cov, unc, prob, obstacle] × patch + [x, y, sin, cos]
+            n_patches = 4
+            patch_side = int(np.sqrt((len(obs) - 4) / n_patches))
             prob_start = 2 * patch_side * patch_side  # 第 3 个 patch (0-indexed=2)
             prob_patch = obs[prob_start:prob_start + patch_side * patch_side].reshape(patch_side, patch_side)
 

@@ -6,7 +6,6 @@ map:
   obstacle_ratio: 0.1
 
 info_map:
-  growth_factor: 50
   kappa_max: 1.0
 
 sonar:

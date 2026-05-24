@@ -156,9 +156,9 @@ RL 智能体的观测由四个局部 patch 和归一化状态组成：
 - **局部不确定度 patch**：同上
 - **局部概率 patch**：同上
 - **局部障碍物 patch**：同上（短程避障声呐，论文中需标注为 privileged information）
-- **归一化状态向量**：[x/map_length, y/map_length, psi/2π]
+- **归一化状态向量**：[x/map_length, y/map_length, sin(psi), cos(psi)]
 
-拼接为扁平向量，输入维度 = 4×(2R+1)² + 3（4 patch + 状态，默认 R=5，共 487 维）。
+拼接为扁平向量，输入维度 = 4×(2R+1)² + 4（4 patch + 状态，默认 R=5，共 488 维）。
 
 ### 环境对比
 
@@ -166,7 +166,7 @@ RL 智能体的观测由四个局部 patch 和归一化状态组成：
 |---|---|---|
 | **运动** | 逐格移动 | 一阶运动学（v·dt = 30m/步） |
 | **动作** | 8 方向（罗盘） | 5 航向变化（-90°~+90°） |
-| **观测** | dict（含 auv_pos, coverage 等） | 1D array（487 维，4 patch） |
+| **观测** | dict（含 auv_pos, coverage 等） | 1D array（488 维，4 patch） |
 | **用途** | 传统算法快速验证 | RL 训练 + 正式实验 |
 | **Gymnasium** | ✅ 继承 gym.Env | ✅ 继承 gym.Env |
 
