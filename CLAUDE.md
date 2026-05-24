@@ -32,7 +32,7 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 - **连续环境**: 5个航向变化动作[-90°, -45°, 0°, +45°, +90°], time_step=30s→30m/步=1格
 - **奖励**: coverage_gain=1.0, revisit_gain=0.0, find_target=100, collision=-2.0, step_penalty=-0.05
 - **DQN ε**: 线性衰减, epsilon_decay_steps=300000 (1.0→0.1)
-- **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位[0.01, 10], τ=0.003
+- **SAC**: 离散动作, 梯度裁剪max_norm=10.0, α钳位[0.01, 10], τ=0.003, target_entropy_scale=0.2
 - **碰撞**: 回退原位 + 随机旋转90-180°打破死循环
 - **航向编码**: `[sin(psi), cos(psi)]`（消除周期性不连续，替代归一化角度）
 - **固定目标**: uncertainty_decay=1.0（不恢复，已扫区域确信无目标）
@@ -44,13 +44,13 @@ utils/          → config_loader（深度合并）/ replay_buffer / logger / vi
 ```bash
 # 训练（所有脚本从项目根目录运行）
 python scripts/train_dqn.py --exp-name dqn_v6 --total-steps 400000
-python scripts/train_sac.py --exp-name sac_v6 --total-steps 400000
+python scripts/train_sac.py --exp-name sac_v7 --total-steps 400000
 
 # 评估（--seed 控制基准种子，第 ep 回合用 seed+ep）
 python scripts/evaluate.py --algo dqn --checkpoint experiments/checkpoints/<path>/best.pt --episodes 100 --seed 0
 
 # 传统算法测试
-python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 50 --seed 42
+python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 50 --seed 0
 python scripts/run_algo.py --algo greedy_prob --episodes 30 --render
 
 # 消融实验（带标准差）
@@ -90,6 +90,14 @@ tensorboard --logdir experiments/logs/
 | Random | 88% | 125 | 下界 |
 
 *注：传统算法50回合seed=0评估，RL 100回合seed=0 deterministic评估。Random 88% > SAC 87%不代表Random更好——Random的探索碰巧在seed=0配置下有效，SAC的gap源于离散softmax的argmax提取缺陷（训练sr 98%）。*
+
+## SAC Deterministic Gap 现象与解决
+
+**现象**：离散SAC的训练success_rate（multinomial采样）与deterministic评估（argmax）之间存在系统性偏差。v6（target_entropy_scale=0.3）下gap约7-11%，训练sr 98%但deterministic仅87%。
+
+**原理**：auto-alpha将策略熵维持在target_entropy附近。scale=0.3时target_entropy≈0.483，softmax分布不够尖锐——训练时multinomial采样可"赌对"次优动作掩盖分布平坦，评估时argmax只取概率最高动作，暴露了分布的不确定性。
+
+**解决**：将target_entropy_scale从0.3降至0.2（target_entropy≈0.322），alpha收敛至0.31。策略分布更尖锐，training-eval gap从7%缩至2%。消融验证：scale=0.2时200k步即达到91% deterministic（与scale=0.3的400k步92%持平），收敛效率翻倍。v7正式采用0.2。
 
 ## 已实现的重要改进
 
