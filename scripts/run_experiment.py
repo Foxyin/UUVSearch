@@ -82,6 +82,9 @@ def main():
 
     algo = create_algorithm(args.algo, algo_config)
 
+    if args.seed is not None:
+        np.random.seed(args.seed)
+
     success_count = 0
     total_steps = 0
     for ep in range(args.episodes):

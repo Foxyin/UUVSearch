@@ -159,7 +159,7 @@ class LawnmowerSearch(BaseAlgorithm):
             target_x = (target_c + 0.5) * self.resolution
             target_y = (target_r + 0.5) * self.resolution
 
-            x_norm, y_norm = float(obs[-3]), float(obs[-2])
+            x_norm, y_norm = float(obs[-4]), float(obs[-3])
             cur_x = x_norm * self.map_length
             cur_y = y_norm * self.map_length
 
