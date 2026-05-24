@@ -84,7 +84,7 @@ python scripts/run_experiment.py --env continuous --algo random --episodes 20 --
 python scripts/train_dqn.py --exp-name dqn_v6 --total-steps 400000
 
 # 训练 SAC
-python scripts/train_sac.py --exp-name sac_v6 --total-steps 400000
+python scripts/train_sac.py --exp-name sac_v7 --total-steps 400000
 
 # 查看训练曲线（含 success_rate）
 tensorboard --logdir experiments/logs/
@@ -94,11 +94,11 @@ tensorboard --logdir experiments/logs/
 
 ```bash
 # 评估 SAC 在正方形地图上的表现
-python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v6/best.pt --episodes 100
+python scripts/evaluate.py --algo sac --checkpoint experiments/checkpoints/sac_v7/best.pt --episodes 100
 
 # 评估在非规则多边形上的泛化能力
 python scripts/evaluate.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v6/best.pt \
+  --checkpoint experiments/checkpoints/sac_v7/best.pt \
   --env-config config/env/continuous_irregular.yaml --episodes 50
 ```
 
@@ -119,7 +119,7 @@ python scripts/plot_results.py --csv experiments/ablation/results_sac.csv
 
 ```bash
 python scripts/render_episode.py --algo sac \
-  --checkpoint experiments/checkpoints/sac_v6/best.pt \
+  --checkpoint experiments/checkpoints/sac_v7/best.pt \
   --max-steps 200
 python scripts/render_episode.py --algo dqn \
   --checkpoint experiments/checkpoints/dqn_v6/best.pt \
@@ -178,7 +178,7 @@ RL 智能体的观测由四个局部 patch 和归一化状态组成：
 | Lawnmower | 传统 | ✅ 8 方向 | ✅ 5 航向 | 预知全图，梳形全覆盖 — 效率上界 |
 | GreedyProb | 传统 | ✅ 8 方向 | ✅ 5 航向 | 信息驱动，走向概率最高处 — 测试信息地图价值 |
 | DQN | Value RL | — | ✅ 5 动作 | target network + ε-greedy（线性衰减） |
-| SAC | Actor-Critic RL | — | ✅ 5 动作 | 双 Critic + 自动熵调节 |
+| SAC | Actor-Critic RL | — | ✅ 5 动作 | 双 Critic + 自动熵调节（target_entropy_scale=0.2，优化确定性gap） |
 
 > 三个传统算法形成基线梯度：Random（不用信息）→ GreedyProb（用信息地图）→ Lawnmower（用完整地图）。RL 算法在不依赖完整地图的条件下逼近 Lawnmower 的效率，即为有效学习。
 
