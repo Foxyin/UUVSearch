@@ -14,7 +14,7 @@ algorithms/     → 搜索算法（传统基线与 RL）
   random_search / lawnmower / greedy_prob → 传统基线
   dqn/ sac/     → RL 算法（DQNAgent / SACAgent，独立接口）
 envs/           → Gymnasium 仿真环境
-  continuous_env.py → 主实验环境（连续运动学，487维观测）
+  continuous_env.py → 主实验环境（连续运动学，488维观测）
   grid_env.py       → 快速原型环境（离散网格，dict观测）
   auv_model.py      → 一阶运动学（psi方向=移动方向，y轴向下=grid row增加）
   sonar_model.py    → 圆形/扇形FOV，Bresenham射线遮挡
@@ -92,7 +92,7 @@ tensorboard --logdir experiments/logs/
 - 碰撞防夹缝：对角线移动检查侧邻格 + 物理坐标出界检测
 - 碰撞脱困：随机旋转90-180°打破死循环
 - DQN ε线性衰减 + SAC梯度裁剪α钳位
-- 观测含障碍物通道（4 patch = 487维）
+- 观测含障碍物通道（4 patch = 488维）
 - checkpoint：20k步保存 + 自动保留训练 success_rate 最高的 best.pt
 - DQN 梯度裁剪（`clip_grad_norm_`, max_norm=10.0）防灾难性遗忘
 - revisit_gain=0 消除刷分局部最优（重访28格×300步 = +840 > 找目标 +100）
