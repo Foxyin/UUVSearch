@@ -74,7 +74,7 @@ python scripts/run_algo.py --algo lawnmower --episodes 10 --render
 python scripts/run_experiment.py --env continuous --algo lawnmower --episodes 10
 
 # 可复现评估（固定 seed）
-python scripts/run_experiment.py --env continuous --algo random --episodes 20 --seed 42
+python scripts/run_experiment.py --env continuous --algo random --episodes 20 --seed 0
 ```
 
 ### 训练 RL 模型
