@@ -7,7 +7,7 @@ lr_critic: 3e-5
 lr_alpha: 1e-4
 alpha: 0.2
 auto_alpha: true
-target_entropy_scale: 0.3          # 降低目标熵，允许更确定性策略
+target_entropy_scale: 0.2          # 更尖锐分布，缩小 training-eval gap
 buffer_size: 100000
 batch_size: 64
 learn_start: 1000
