@@ -77,14 +77,19 @@ tensorboard --logdir experiments/logs/
 
 1. 单地图训练（SquareMap seed=42）
 2. Evaluator仅支持RL（需`deterministic`参数），传统算法用run_experiment.py评估
+3. best.pt基于training success_rate选择，对SAC可能非最优：SAC training sr与deterministic eval存在结构性gap（~11%），早期sr尖峰可能锁死best.pt。已改`>`为`>=`缓解，论文评估时建议对比best.pt和final.pt。
 
-## 基线性能 (continuous env, seed=42, max_steps=300, 真贝叶斯)
+## 性能 (continuous env, max_steps=300, 真贝叶斯, 确定性策略)
 
 | 算法 | 成功率 | 平均步数 | 说明 |
 |------|--------|----------|------|
-| Random | 80% | 116 | 下界 |
-| GreedyProb | 90% | 78 | 信息驱动 |
-| Lawnmower | 98% | 61 | 上界（需完整地图） |
+| Lawnmower | 100% | 71 | 上界（需完整地图） |
+| **DQN v6** | **95%** | **48** | RL（ε-greedy, deterministic eval） |
+| GreedyProb | 90% | 88 | 信息驱动 |
+| **SAC v6** | **87%** | **69** | RL（离散SAC, deterministic eval） |
+| Random | 88% | 125 | 下界 |
+
+*注：传统算法50回合seed=0评估，RL 100回合seed=0 deterministic评估。Random 88% > SAC 87%不代表Random更好——Random的探索碰巧在seed=0配置下有效，SAC的gap源于离散softmax的argmax提取缺陷（训练sr 98%）。*
 
 ## 已实现的重要改进
 
@@ -93,7 +98,7 @@ tensorboard --logdir experiments/logs/
 - 碰撞脱困：随机旋转90-180°打破死循环
 - DQN ε线性衰减 + SAC梯度裁剪α钳位
 - 观测含障碍物通道（4 patch = 488维）
-- checkpoint：20k步保存 + 自动保留训练 success_rate 最高的 best.pt
+- checkpoint：20k步保存 + 自动保留训练 success_rate 最高的 best.pt（`>=` 防止同分锁死早期模型）
 - DQN 梯度裁剪（`clip_grad_norm_`, max_norm=10.0）防灾难性遗忘
 - revisit_gain=0 消除刷分局部最优（重访28格×300步 = +840 > 找目标 +100）
 

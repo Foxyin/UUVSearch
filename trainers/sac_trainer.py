@@ -63,7 +63,7 @@ class SACTrainer:
                 self.agent.save(ckpt_path)
                 if recent_success:
                     sr = np.mean(recent_success)
-                    if sr > self.best_sr:
+                    if sr >= self.best_sr:
                         self.best_sr = sr
                         self.agent.save(os.path.join(self.checkpoint_dir, "best.pt"))
 
