@@ -33,9 +33,11 @@ def main():
     map_obj = create_map(env_config["map"]["type"], env_config["map"])
     env = ContinuousSearchEnv(map_obj, env_config)
 
-    # 固定种子
+    # 固定种子（numpy + torch + env + buffer，确保完全可复现）
     if args.seed is not None:
+        import torch
         np.random.seed(args.seed)
+        torch.manual_seed(args.seed)
         env.reset(seed=args.seed)
 
     # 训练

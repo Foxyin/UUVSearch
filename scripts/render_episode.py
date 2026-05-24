@@ -10,6 +10,7 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import matplotlib
+matplotlib.use('Agg')  # 默认非交互后端，避免无 GUI 环境崩溃；交互模式在 main() 中按需切换
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
@@ -31,12 +32,14 @@ def main():
                         help="保存动画（.mp4 或 .gif），默认存到 experiments/figures/")
     args = parser.parse_args()
 
-    # 录制模式用非交互后端
+    # 录制模式用非交互后端（默认已设 Agg，此处切换交互模式）
     if args.save_video:
-        matplotlib.use('Agg')
         plt.ioff()
     else:
-        matplotlib.use('TkAgg')
+        try:
+            matplotlib.use('TkAgg', force=True)
+        except ImportError:
+            pass  # 无 GUI 环境保持 Agg
         plt.ion()
 
     env_config = load_config(args.env_config)
