@@ -1,0 +1,33 @@
+{
+  "canvas": {"width": 200, "height": 80},
+  "style": {"font_size": 8, "stroke": 0.6, "radius": 1.2, "arrow_width": 0.7},
+  "nodes": [
+    {"id": "pa", "type": "group", "x": 2, "y": 4, "w": 60, "h": 72, "label": "(a) 多源观测"},
+    {"id": "pb", "type": "group", "x": 68, "y": 4, "w": 66, "h": 72, "label": "(b) 融合与决策"},
+    {"id": "pc", "type": "group", "x": 140, "y": 4, "w": 58, "h": 72, "label": "(c) 闭环输出"},
+
+    {"id": "a1", "type": "box", "role": "data", "x": 32, "y": 18, "w": 44, "h": 11, "label": "声呐图像", "label_size": 7.5},
+    {"id": "a2", "type": "box", "role": "data", "x": 32, "y": 34, "w": 44, "h": 11, "label": "前视相机", "label_size": 7.5},
+    {"id": "a3", "type": "box", "role": "data", "x": 32, "y": 50, "w": 44, "h": 11, "label": "DVL / IMU", "label_size": 7.5},
+    {"id": "a4", "type": "text", "x": 6, "y": 68, "label": "稀疏、弱纹理、异步", "label_size": 6.5},
+
+    {"id": "b1", "type": "box", "role": "model", "x": 101, "y": 18, "w": 56, "h": 11, "label": "多模态编码器", "label_size": 7.5},
+    {"id": "b2", "type": "box", "role": "model", "x": 101, "y": 34, "w": 56, "h": 11, "label": "跨模态对齐", "label_size": 7.5},
+    {"id": "b3", "type": "box", "role": "accent", "x": 101, "y": 50, "w": 56, "h": 11, "label": "世界模型预测", "label_size": 7.5},
+    {"id": "b4", "type": "text", "x": 72, "y": 68, "label": "隐空间 z_t → 下一状态", "label_size": 6.5},
+
+    {"id": "c1", "type": "box", "role": "model", "x": 169, "y": 18, "w": 48, "h": 11, "label": "规划与控制", "label_size": 7.5},
+    {"id": "c2", "type": "box", "role": "data", "x": 169, "y": 34, "w": 48, "h": 11, "label": "AUV 轨迹", "label_size": 7.5},
+    {"id": "c3", "type": "box", "role": "muted", "x": 169, "y": 50, "w": 48, "h": 10, "label": "成功率 / 误差", "label_size": 7},
+    {"id": "c4", "type": "text", "x": 144, "y": 68, "label": "执行 → 回传观测", "label_size": 6.5},
+
+    {"id": "e1", "type": "arrow", "from": "a1", "to": "b1", "kind": "data"},
+    {"id": "e2", "type": "arrow", "from": "a2", "to": "b1", "kind": "data"},
+    {"id": "e3", "type": "arrow", "from": "a3", "to": "b1", "kind": "data"},
+    {"id": "e4", "type": "arrow", "from": "b1", "to": "b2", "kind": "data"},
+    {"id": "e5", "type": "arrow", "from": "b2", "to": "b3", "kind": "data", "label": "蒸馏", "label_pos": "right"},
+    {"id": "e6", "type": "arrow", "from": "b3", "to": "c1", "kind": "data", "via": [[137, 50], [137, 18]]},
+    {"id": "e7", "type": "arrow", "from": "c1", "to": "c2", "kind": "data"},
+    {"id": "e8", "type": "arrow", "from": "c2", "to": "c3", "kind": "sup"}
+  ]
+}
