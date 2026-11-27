@@ -53,7 +53,7 @@ docs/            README（索引）· 00-handoff · 01-review · 02-plan · 03-d
 ## 评估纪律（旧结论已撤回）
 
 - **不要**再引用“DQN 95% / SAC 94% 优于 Lawnmower”这类数字：那是匹配声呐宽的基线缺失 + 单 seed + 不同回合数造成的。
-- 主指标：条件 time-to-find（成功回合的步数/能量）+ 删失率；成功率只作次要指标（已饱和：random ≈83–87%）。
+- 主指标：time-to-find（KM 中位 + 删失率，别只用“成功回合的平均值”，有长度偏差）；成功率只作次要指标（已饱和：random ≈83–87%）。
 - 同一配置 ≥3 训练 seed，报全部 seed，不挑最好；方法间用 common random numbers 配对。
 - 同时评估 `best.pt` 与 `final.pt`（best 按训练 success_rate 选，SAC 有训练/评估 gap）。
 - 表格由 `scripts/make_tables.py` 从 CSV 生成，**不要手填**。
@@ -86,8 +86,10 @@ Phase 0 之后统一入口：`& $py scripts\run_suite.py --suite gate1 --config 
 
 ## 下一步（截至 2026-11-28）
 
-1. 用户确认计划 v3.1 §11 的 5 个设计点（虚警语义、C0c/C3c、训练图、结构化图种类、短稿 venue）。
-2. Phase 0：地图工厂 M1–M5 + 检测层（Pd/Pfa）+ odds-Bayes + 能量 + `info_gain` 基线 + `run_suite.py` / `make_tables.py`。
-3. Gate 1 跑 7 方法 × 5 图 × 5 seeds（不训练），确认排名稳定后再进 Gate 2 训练。
+计划已到 **v3.2**，§11 五个设计点全部拍板（虚警走 A、C0c/C3c 加、先 M1、先做管线+礁石、写作暂缓）。
+
+1. Phase 0：地图工厂 M1–M5 + 检测层（Pd/Pfa）+ odds-Bayes（确定性档精确更新）+ 能量（按 free_cells 归一化）+ `info_gain` / `online_lawnmower` 基线 + `run_suite.py` / `make_tables.py`。
+2. Gate 1：6 个经典方法 × 5 图 × 5 seeds（不训练，25 ep/方法），判据 = 排名稳定 + 每图覆盖基线接近 oracle 下界。
+3. Gate 1 通过后再进 Gate 2 训练（48 run：C0/C0c/C1/C2/C3/C3c/C4）。
 
 不要跳步：Gate 1 不通过就先修协议，不要直接训练大量模型。
