@@ -30,12 +30,14 @@
 
 **May write:**
 - `paper/**`（正文、图、表、bib）
+- `paper/tables/`（运行 `scripts/make_tables.py --out paper/tables/` 生成，脚本本身不改）
 - `协作/角色/writer.md`、`协作/交接/writer-*`、`协作/提案/*`
 - `协作/变更日志.md` 追加一行
 
 **Must not write:**
-- `docs/*`、`results/*`、`envs/ algorithms/ scripts/ config/`
+- `docs/*`、`results/*`、`envs/ algorithms/ scripts/ config/`（脚本只读运行）
 - 其他角色文档、`协作/评审/*`（自审报告放 `paper/reviews/`）
+- 不跑训练/评估、不改 CSV、不手改数字
 
 ## 4. Current task
 

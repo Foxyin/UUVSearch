@@ -39,6 +39,12 @@
 - `协作/变更日志.md` 追加一行
 
 **Must not write:**
+- 被审对象本身（计划/代码/CSV/表/图/论文）
+- `docs/*`、`results/*`、`envs/ algorithms/ scripts/ config/`、`paper/*`
+- 其他角色文档、`协作/协作规则.md`、`协作/角色注册表.md`
+- 只读命令允许：`git log/show/diff`、读文件、读 CSV；**不跑**训练/评估/生成脚本，不产生数据
+
+**Must not write:**
 - `docs/*`（事实源）、`envs/ algorithms/ scripts/ config/`、`results/*`、`paper/*`
 - 其他角色文档
 

@@ -31,14 +31,19 @@
 
 **May write:**
 - 分支 `feat/gate1-protocol` 上的 `envs/ algorithms/ scripts/ config/ trainers/`
-- `results/<tag>/*`
+- `config/suites/*`（新套件配置）、`scripts/make_tables.py`
+- `results/<tag>/*`（新 tag，不覆盖旧结果）
+- `docs/04-maps/*`（**仅**生成的 PNG/ASCII，不写其中的文字说明）
+- `experiments/*` 只新增，不覆盖旧 checkpoint/log
 - `协作/角色/experimenter.md`、`协作/交接/experimenter-*`、`协作/提案/*`
 - `协作/变更日志.md` 追加一行
+- push **自己的功能分支**（不合 `main`）
 
 **Must not write:**
-- `docs/*`、`协作/角色/owner.md`、`协作/角色/reviewer.md`、`协作/评审/*`
+- `docs/` 下的文字文件（STATUS/计划/决策/问题清单）、`README.md`、`CLAUDE.md` → 要改走提案
+- `协作/角色/owner.md`、`协作/角色/reviewer.md`、`协作/评审/*`
 - `main` 分支（只在自己的功能分支上提交）
-- `experiments/checkpoints/*` 旧产物（新 tag 另存）
+- 删除或覆盖旧 `results/`、`experiments/` 产物
 
 ## 4. Current task
 

@@ -35,12 +35,15 @@
 - `协作/协作规则.md`、`协作/角色注册表.md`、`协作/变更日志.md`、`协作/启动提示词.md`
 - `协作/提案/*`、`协作/交接/owner-*`
 - 根 `README.md`、`CLAUDE.md`（项目说明类）
+- `.dsh/skills/**`（技能增删，记录到 `.dsh/skills/README.md`）
 
 **Must not write:**
 - `协作/角色/<其他角色>.md`
 - `协作/评审/*`（评审由 `reviewer` 写；`owner` 只写“采纳/拒绝”结论到 decisions）
-- `results/*`、`paper/*`
+- `results/*`、`paper/*`、`config/suites/*`
+- `docs/04-maps/*`（生成物归 `experimenter`；`owner` 只写文字说明）
 - `docs/00-handoff/*`（只读）
+- 不得删除或覆盖 `results/`、`experiments/`、`docs/` 的旧内容；清理须用户批准并记 decisions
 
 ## 4. Current task
 
