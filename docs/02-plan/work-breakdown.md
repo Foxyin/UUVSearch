@@ -96,5 +96,5 @@
 ## 8. 现在需要做的（等审查收口后）
 
 1. `owner`：把审查必改项并入计划 v3.3，更新 STATUS。
-2. 开 `experimenter`：T-P0-01 → T-P0-11。
-3. 用户只需两件事：确认 `reviewer` 否决权（可延后）、给 `experimenter` 的自主预算上限（建议 Gate 1 内自主，G2 训练前报批）。
+2. 开 `experimenter`：T-P0-01 → T-P0-11（Gate 1 及以内自主，不用逐项报批）。
+3. 两个权限问题已定（2026-11-28）：`reviewer` 无否决权、必改项未修完不能过；`experimenter` Gate 2 起训练前报批。

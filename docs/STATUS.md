@@ -51,11 +51,16 @@
 
 验收：一条命令跑完 Gate 1；`results/gate1/` 有 `episodes.csv / summary.json / meta.json`；表能从 CSV 重建。
 
+## 已定（2026-11-28，第六轮）
+
+1. `reviewer` 无否决权；必改项未修完 Gate 不能过（`owner` 逐条回应）。
+2. `experimenter`：Gate 1 及以内自主；Gate 2 起训练前报批；>2 h 批量先报批。
+3. 每角色完成任务写 `协作/记录/<role>-*.md`（不写=未完成）。
+4. 任务清单见 `docs/02-plan/work-breakdown.md`（34 项）。
+
 ## 未决（等用户）
 
-1. **是否现在开工 Phase 0**（顺序已定：先审查 → 收口 → 再开工；等审查结果）。
-2. `reviewer` 的“正式评审”是**建议**还是**可否决 Gate**（用户 2026-11-28：暂不定，过渡期按“不设否决权、必改项未修完不能过”执行）。
-3. `experimenter` 的自主预算上限（比如 Gate 1 以内可自主跑，Gate 2 训练必须 owner 批）。
+- **无**。唯一排队：等用户新开 `reviewer` 会话完成“计划覆盖审查”，然后一起收口；收口后开 `experimenter` 做 Phase 0。
 
 ## 协作机制现状（2026-11-28）
 
