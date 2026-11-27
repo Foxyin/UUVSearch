@@ -36,6 +36,7 @@
 - `docs/04-maps/*`（**仅**生成的 PNG/ASCII，不写其中的文字说明）
 - `experiments/*` 只新增，不覆盖旧 checkpoint/log
 - `协作/角色/experimenter.md`、`协作/交接/experimenter-*`、`协作/提案/*`
+- `协作/记录/experimenter-*`（每轮任务记录，见规则 §5.1）
 - `协作/变更日志.md` 追加一行
 - push **自己的功能分支**（不合 `main`）
 

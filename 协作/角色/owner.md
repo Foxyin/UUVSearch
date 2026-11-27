@@ -35,6 +35,7 @@
 - `协作/协作规则.md`、`协作/角色注册表.md`、`协作/变更日志.md`、`协作/启动提示词.md`
 - `协作/提案/*`、`协作/交接/owner-*`
 - 根 `README.md`、`CLAUDE.md`（项目说明类）
+- `协作/记录/owner-*`（每轮任务记录，见规则 §5.1）
 - `.dsh/skills/**`（技能增删，记录到 `.dsh/skills/README.md`）
 
 **Must not write:**

@@ -38,6 +38,8 @@
 
 ## 下一步（Phase 0，1–1.5 天，不训练）
 
+> 完整任务清单、验收与依赖见 [`docs/02-plan/work-breakdown.md`](02-plan/work-breakdown.md) §1（T-P0-01…T-P0-11）。
+
 1. 从 `main` 开 `feat/gate1-protocol`。
 2. 地图工厂：M1（随机 10%，14×14，原图形状）、M2（随机 15%）、M3（管线+礁石）、M4（20×20 held-out）、M5（走廊 16×16 held-out）；固定 seed、局部 `RandomState`、导出 PNG+ASCII 到 `docs/04-maps/`。
 3. 检测层：`detection:` 配置段；`deterministic` 档用**精确更新**（扫过自由格置 0）；`sampled` 档真目标 Bernoulli(Pd(d))、其他格 Bernoulli(Pfa)；每回合 `events.csv`。
@@ -59,6 +61,7 @@
 
 - 四角色：`owner`（总讨论/PM，本会话）、`reviewer`（按需，新上下文）、`experimenter`（按需）、`writer`（idle，Gate 3 后）。
 - 规则：`协作/协作规则.md`；注册表：`协作/角色注册表.md`；首次启动协议：`协作/入职与首个任务.md`。
+- 任务记录：每个角色完成后写 `协作/记录/<role>-YYYYMMDD-主题.md`（规则 §5.1，不写视为未完成）。
 - 当前动作：等用户新开 `reviewer` 会话 → 审计划 v3.2 覆盖性 → 一起收口 → 开 `experimenter` 做 Phase 0。
 
 ## 环境与运行（踩过的坑）

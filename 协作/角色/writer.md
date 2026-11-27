@@ -32,6 +32,7 @@
 - `paper/**`（正文、图、表、bib）
 - `paper/tables/`（运行 `scripts/make_tables.py --out paper/tables/` 生成，脚本本身不改）
 - `协作/角色/writer.md`、`协作/交接/writer-*`、`协作/提案/*`
+- `协作/记录/writer-*`（每轮任务记录，见规则 §5.1）
 - `协作/变更日志.md` 追加一行
 
 **Must not write:**

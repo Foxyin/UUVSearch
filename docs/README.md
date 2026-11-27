@@ -7,7 +7,7 @@
 | `STATUS.md` | **唯一事实源**：当前状态、下一步、未决问题（接任者先读） | 2026-11-28 版 |
 | `00-handoff/` | 外部/前任交接，只读参考，不随项目演进修改 | `UUVSearch-交接-20261127.md`（TAOLUN 交接 v1.0：定位 search-only、P0/P1、3 周 Gate、不要做清单） |
 | `01-review/` | 问题清单与审计记录：发现了什么、证据、处置 | `2026-11-27-audit.md`（首次基准审计：7 算法实测、五项诊断、工具坑）、`2026-11-28-issues-checklist.md`（问题总表 A1–F6，每条都有落点） |
-| `02-plan/` | 活的实验计划（版本号 + 变更日志） | `plan-2026-11-28.md`（v3.2：假设 H1–H4、环境改造、地图集 M1–M5、Gate 1/2/3、48-run 矩阵、KM TTF、free-cell 能量） |
+| `02-plan/` | 活的实验计划（版本号 + 变更日志）与工作分解 | `plan-2026-11-28.md`（v3.2：假设 H1–H4、环境改造、地图集 M1–M5、Gate 1/2/3、48-run 矩阵、KM TTF、free-cell 能量）、`work-breakdown.md`（WBS：P0/G1/G2/G3/W/E 六段，任务 ID、角色、验收、风险） |
 | `03-decisions/` | 用户拍板的决策（口径、边界、算力、署名等） | `2026-11-28-decisions.md` |
 | `04-maps/` | 地图的 PNG + ASCII 导出（论文附图用） | `/.gitkeep`（Phase 0 生成） |
 
@@ -15,7 +15,7 @@
 
 - 根目录 [`README.md`](../README.md)：项目入口、当前状态、目录导航、工作流程、快速开始。
 - 根目录 [`CLAUDE.md`](../CLAUDE.md)：给 AI/协作者的工程备忘录（环境事实、命令、约束、下一步）。
-- 根目录 [`协作/`](../协作/)：四角色协作（owner / reviewer / experimenter / writer），规则见 `协作/协作规则.md`。
+- 根目录 [`协作/`](../协作/)：四角色协作（owner / reviewer / experimenter / writer），规则见 `协作/协作规则.md`；每个角色完成任务后写 `协作/记录/<role>-*.md`（机制迭代用，见规则 §5.1）。
 - `.dsh/skills/README.md`：项目级 DSH 技能部署记录（8 个技能、来源、去重结论）。
 
 ## 约定
