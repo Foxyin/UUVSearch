@@ -4,7 +4,7 @@
 
 - 部署时间：2026-11-27
 - 部署位置：`<项目>\.dsh\skills\<name>\SKILL.md`（DSH 只扫 `.dsh\skills` 与 `.agents\skills`）
-- 校验方式：`GET http://127.0.0.1:49687/api/dsh-skill-explorer/list?cwd=<urlencoded>`，全部 `level=project-dsh`、`modelInvocable=True`
+- 校验方式：`GET http://127.0.0.1:54629/api/dsh-skill-explorer/list?cwd=<urlencoded>`（端口随本次 GUI 会话变化；旧记录为 49687），全部 `level=project-dsh`、`modelInvocable=True`
 
 | 技能 | 来源 | 文件数 | 说明 |
 |---|---|---|---|
@@ -15,6 +15,7 @@
 | `paper-reviewer` | `C:\Users\17053\Desktop\paper review\.claude\skills\paper-reviewer` | 4 | 投稿前自审 D1–D4，中英双语报告 |
 | `research-paper-writing` | `skills_manager\download\paper-skills-dsh\skills\research-paper-writing` | 38 | 2026-11-28 加装：按节写作/改写、claim-support 对齐、投稿前自审 |
 | `topconf-figure` | `skills_manager\download\topconf-figure` | 6 | 2026-11-28 加装：TikZ 矢量主图（Figure 1/系统框图），不做数据图 |
+| `multi-role-collab` | `skills_manager\download\collab-skills\multi-role-collab` | 9 | 2026-11-28 加装：四角色协作纪律（角色文档/单写者/评审效力/交接），配 `协作/` 目录与 `scripts/init_collab.py` |
 
 ## 去重说明
 

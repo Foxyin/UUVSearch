@@ -2,7 +2,7 @@
 
 单 AUV 自主目标搜索的强化学习仿真基准：AUV 搭载有限探测距离的声呐，在未知障碍物环境中通过连续运动学和信息地图搜索静止目标。
 
-> **当前阶段（2026-11-28）**：项目正在从“跑通 demo”转为“可投稿的经验研究”。旧的性能结论已于 2026-11-27 审计后撤回（见下文「历史结论撤回」），当前主线是计划 v3.1 的 Phase 0 → Gate 1/2/3，尚未开始正式训练。**读代码前先读 [`docs/02-plan/plan-2026-11-28.md`](docs/02-plan/plan-2026-11-28.md)。**
+> **当前阶段（2026-11-28）**：项目正在从“跑通 demo”转为“可投稿的经验研究”。旧的性能结论已于 2026-11-27 审计后撤回（见下文「历史结论撤回」），当前主线是计划 **v3.2** 的 Phase 0 → Gate 1/2/3，**Phase 0 尚未开工、没有新实验数据**。实时状态看 [`docs/STATUS.md`](docs/STATUS.md)；读代码前先读 [`docs/02-plan/plan-2026-11-28.md`](docs/02-plan/plan-2026-11-28.md)。
 
 ## 这个项目要回答什么
 
@@ -22,11 +22,17 @@ UUVSearch/
 ├── CLAUDE.md              ← 给 AI/协作者的工程备忘录（环境、命令、约束）
 ├── docs/
 │   ├── README.md          ← 文档索引（按用途分目录）
+│   ├── STATUS.md          ← 唯一事实源：当前状态 / 下一步 / 未决问题
 │   ├── 00-handoff/        ← 只读交接文档
 │   ├── 01-review/         ← 问题清单 + 审计记录
 │   ├── 02-plan/           ← 活的实验计划（带版本号与变更日志）
 │   ├── 03-decisions/      ← 用户拍板的决策
 │   └── 04-maps/           ← 地图 PNG/ASCII 导出（Phase 0 生成）
+├── 协作/                  ← 四角色协作（owner / reviewer / experimenter / writer）
+│   ├── 协作规则.md        ← 单写者、分诊、模式、评审效力、Gate 流转
+│   ├── 角色注册表.md      ← 角色 ID / 状态 / 接任
+│   ├── 启动提示词.md      ← 四个角色的复制粘贴提示词
+│   └── 角色/ 评审/ 讨论/ 提案/ 交接/
 ├── envs/                  ← 仿真环境
 │   ├── continuous_env.py  ← 主环境（488 维观测，连续运动学）
 │   ├── auv_model.py       ← 一阶运动学（1 格/步，5 航向）
@@ -57,7 +63,7 @@ Gate 2（W2）48-run 小网格训练（检测退化 × 能量 × 信念观测/�
 Gate 3（W3）边界热图 + 失败案例 → 4–6 页短稿 / 技术报告
 ```
 
-每个 Gate 的通过标准、实验矩阵、指标定义见计划 v3.1 的 §5–§7。
+每个 Gate 的通过标准、实验矩阵、指标定义见计划 v3.2 的 §5–§7。
 
 ## 环境与运行
 
@@ -97,7 +103,7 @@ tensorboard --logdir experiments/logs/
 | 运动学 | 1 m/s × 30 s/步 = 1 格/步；动作 = 航向变化 {−90,−45,0,+45,+90}° |
 | 观测 | 4 个 11×11 patch（覆盖/不确定度/概率/障碍）+ 4 维状态 = **488 维** |
 | 奖励 | 新覆盖 +1.0/格，重访 0，找到目标 +100，碰撞 −2，每步 −0.05 |
-| 回合 | 找到目标或 300 步（新协议改为能量预算 300/600/1000） |
+| 回合 | 找到目标即终止；否则到能量预算（`1.5× / 2.5× / 4× free_cells`）或无发现上限 |
 
 已知的模型问题（检测确定性、信念更新与环境不一致、uncertainty 通道冗余、障碍 patch 是特权信息等）见 [`docs/01-review/2026-11-28-issues-checklist.md`](docs/01-review/2026-11-28-issues-checklist.md)，修复方案见计划 §2。
 
@@ -106,9 +112,11 @@ tensorboard --logdir experiments/logs/
 | 算法 | 类型 | 说明 |
 |---|---|---|
 | Random | 基线 | 均匀随机，下界 |
-| Lawnmower | 经典 | 梳形全覆盖，需完整地图；**现状 swath=2 与声呐不匹配，正在修** |
+| Lawnmower | 经典 | 梳形全覆盖，需完整地图（**oracle**）；swath = 2×声呐半径 + A* 导航 |
+| OnlineLawnmower | 经典 | 只用已知自由格的在线梳形覆盖，A* 重规划；**公平的强覆盖基线（Phase 0 新增）** |
 | GreedyProb | 经典 | 局部 11×11 概率贪心，使用真值可通行掩码（特权） |
 | InfoGain | 经典 | 熵减贪心，**Phase 0 新增** |
+| BayesMyopic | 经典 | 自维护 odds 后验，取最大后验格，A* 导航 |
 | DQN | RL | Double DQN + target net + ε 线性衰减 |
 | SAC | RL | 离散 SAC + 自动熵（target_entropy_scale=0.2） |
 
@@ -124,6 +132,19 @@ tensorboard --logdir experiments/logs/
 | “成功率 95%” | 随机策略也有 87%，成功率已饱和；有区分度的是 **time-to-find**（KM 中位 + 删失率） |
 
 审计细节与 7 算法实测表：`docs/01-review/2026-11-27-audit.md`。
+
+## 角色协作（四角色）
+
+项目用 [`multi-role-collab`](.dsh/skills/multi-role-collab/SKILL.md) 的纪律，把工作拆成四个**角色**（不是四个模型，是四顶帽子；同一模型可换帽子，但一个会话只戴一顶）：
+
+| 角色 | 负责 | 不负责 | 允许的技能 |
+|---|---|---|---|
+| `owner`（总讨论/PM） | 事实源 `docs/STATUS.md`、计划、决策、分派、拍板、对用户汇报 | 不写实验代码、不自我审查、不写论文正文 | multi-role-collab、experiment-design、karpathy-guidelines |
+| `reviewer`（审查） | 独立审一个**指定对象**（计划/代码/结果表/论文 claim），给证据 + 必改项 | 不改对象、不跑实验、不做项目决定 | paper-reviewer、experiment-design（对照）、karpathy-guidelines |
+| `experimenter`（实验） | 在 `feat/gate1-protocol` 实现协议、跑指定矩阵、落 `results/<tag>/` | 不改计划、不解释结论、不自行扩矩阵、不合 main | karpathy-guidelines、experiment-design（只读矩阵/预算） |
+| `writer`（论文写作，Gate 3 后启用） | 写稿、制图、排版，只用 `results/` 与 `make_tables.py` | 不改数据、不改代码、不定刊物 | research-paper-writing、latex-academic-publisher、academic-plotting、topconf-figure、paper-reviewer |
+
+规则与启动提示词见 [`协作/协作规则.md`](协作/协作规则.md) 与 [`协作/启动提示词.md`](协作/启动提示词.md)。核心三条：**角色文档不是事实源**；**一个文件一个写者，不是自己的文件写提案**；**不自我审查**。
 
 ## 扩展指南
 

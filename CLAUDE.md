@@ -27,7 +27,8 @@ algorithms/      random_search · lawnmower · greedy_prob · dqn/ · sac/
 trainers/        dqn_trainer · sac_trainer · evaluator
 scripts/         train_dqn · train_sac · evaluate · run_experiment · run_algo · run_ablation · render_episode
 config/          algo/*.yaml · env/*.yaml
-docs/            README（索引）· 00-handoff · 01-review · 02-plan · 03-decisions · 04-maps
+docs/            README（索引）· STATUS（事实源）· 00-handoff · 01-review · 02-plan · 03-decisions · 04-maps
+协作/            四角色协作：协作规则 · 角色注册表 · 启动提示词 · 角色/评审/讨论/提案/交接
 ```
 
 ## 环境与模型的既有事实（改代码前必看）
@@ -41,6 +42,14 @@ docs/            README（索引）· 00-handoff · 01-review · 02-plan · 03-d
 - 碰撞：回退原位 + 随机 ±90–180° 旋转 + 罚分（会连锁，C7）。
 - 目标从 `grid == 0` 均匀采样；`SquareMap` 用局部 `RandomState(42)`，不污染全局种子。
 - 所有已知问题与处置见 [`docs/01-review/2026-11-28-issues-checklist.md`](docs/01-review/2026-11-28-issues-checklist.md)。
+
+## 协作纪律（四角色）
+
+- 角色：`owner`（总讨论/PM，主会话）· `reviewer`（审查，独立新上下文）· `experimenter`（实验，独立新上下文）· `writer`（写作，Gate 3 后）。
+- 事实源只有 `docs/STATUS.md` + `docs/02-plan` + `docs/03-decisions`；角色文档、讨论、评审、交接都不是事实。
+- 一个文件一个写者；不是自己的文件写 `协作/提案/`。**不自我审查**：写代码的人不审自己的代码。
+- 实验角色只在 `feat/gate1-protocol` 上提交，不回 main；结果必须落 `results/<tag>/episodes.csv`，表由 `scripts/make_tables.py` 生成。
+- 规则细节：[`协作/协作规则.md`](协作/协作规则.md)；角色启动提示词：[`协作/启动提示词.md`](协作/启动提示词.md)。
 
 ## 分支与改动纪律
 
