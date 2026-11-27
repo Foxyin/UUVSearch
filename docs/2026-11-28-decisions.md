@@ -28,9 +28,11 @@
 
 ## 3. 算力（定：用 GPU）
 
-用 GPU 训练。**前置条件**：当前 `D:\Anaconda\envs\UUVSearch` 里是 `torch 2.4.1+cpu`，需要先装 CUDA 版 torch（cu121 或 cu124，视驱动；RTX 4060 Laptop 8GB），并验证 `torch.cuda.is_available()` 与单进程吞吐提升后再排训练。
+用 GPU 训练。**2026-11-28 复核**：用户判断正确，机器上确实已有 CUDA 版 torch —— `cyclegan` env = torch 2.3.0+cu118、`py3.8` env = 2.2.2+cu118，均 `cuda.is_available()=True`；但 `UUVSearch` env 仍是 `2.4.1+cpu`，且上述两个 env 都没装 gymnasium。
 
-注意：本项目网络小（MLP 256×2、batch 64），GPU 收益主要在并行多 seed，单步未必快很多；装好后先做一次基准对比再决定是否全量上 GPU。
+实测（RTX 4060 Laptop 8GB，驱动 610.91；MLP 488→256→256→5，batch 64，1000 次 update）：CPU 12.18 ms/update、GPU 3.38 ms/update ≈ **3.6×**。
+
+结论：给 `UUVSearch` env 装 `torch==2.4.1+cu118`（2.7 GB；C: 剩 51.8 GB）。pip 临时目录需改到项目 `.tmp`，否则沙箱拒绝写 `%TEMP%`（实测 `PermissionError`）。装好后先复测 micro-benchmark 再排训练。
 
 ## 4. WIP 分支（定：可作起点，但要改）
 

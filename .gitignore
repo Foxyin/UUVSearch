@@ -43,3 +43,8 @@ experiments/ablation/
 
 # Claude Code config
 .claude/
+
+# Local scratch (torch wheels, probes)
+.tmp/
+results/
+
