@@ -1,0 +1,391 @@
+{
+  "meta": {
+    "algo": "oracle_coverage",
+    "checkpoint": null,
+    "env_config": "config/env/continuous_square.yaml",
+    "episodes": 40,
+    "seed": 0,
+    "max_steps": 300,
+    "timestamp": "2026-11-27T22:39:36"
+  },
+  "summary": {
+    "algo": "oracle_coverage",
+    "episodes": 40,
+    "success_rate": 0.975,
+    "success_ci95": [
+      0.8711834051199223,
+      0.9955732825922052
+    ],
+    "steps_mean": 62.65,
+    "steps_std": 60.20238782639771,
+    "steps_success_mean": 56.56410256410256,
+    "steps_success_std": 47.28353910557515,
+    "steps_success_median": 46.0,
+    "coverage_end_mean": 0.5328651703894138,
+    "coverage_detected_mean": 0.5417747065807,
+    "collisions_mean": 9.725,
+    "wall_time_s": 1.8
+  },
+  "records": [
+    {
+      "episode": 0,
+      "seed": 0,
+      "success": 1,
+      "steps": 3,
+      "coverage_end": 0.15168538689613342,
+      "coverage_detected": 0.15168538689613342,
+      "collisions": 1
+    },
+    {
+      "episode": 1,
+      "seed": 1,
+      "success": 1,
+      "steps": 48,
+      "coverage_end": 0.5393258333206177,
+      "coverage_detected": 0.5393258333206177,
+      "collisions": 17
+    },
+    {
+      "episode": 2,
+      "seed": 2,
+      "success": 1,
+      "steps": 136,
+      "coverage_end": 0.8483145833015442,
+      "coverage_detected": 0.8483145833015442,
+      "collisions": 26
+    },
+    {
+      "episode": 3,
+      "seed": 3,
+      "success": 1,
+      "steps": 57,
+      "coverage_end": 0.6685393452644348,
+      "coverage_detected": 0.6685393452644348,
+      "collisions": 4
+    },
+    {
+      "episode": 4,
+      "seed": 4,
+      "success": 1,
+      "steps": 4,
+      "coverage_end": 0.15168538689613342,
+      "coverage_detected": 0.15168538689613342,
+      "collisions": 0
+    },
+    {
+      "episode": 5,
+      "seed": 5,
+      "success": 1,
+      "steps": 8,
+      "coverage_end": 0.1404494345188141,
+      "coverage_detected": 0.1404494345188141,
+      "collisions": 1
+    },
+    {
+      "episode": 6,
+      "seed": 6,
+      "success": 1,
+      "steps": 65,
+      "coverage_end": 0.6741573214530945,
+      "coverage_detected": 0.6741573214530945,
+      "collisions": 9
+    },
+    {
+      "episode": 7,
+      "seed": 7,
+      "success": 1,
+      "steps": 26,
+      "coverage_end": 0.32022473216056824,
+      "coverage_detected": 0.32022473216056824,
+      "collisions": 6
+    },
+    {
+      "episode": 8,
+      "seed": 8,
+      "success": 1,
+      "steps": 97,
+      "coverage_end": 0.8370786309242249,
+      "coverage_detected": 0.8370786309242249,
+      "collisions": 15
+    },
+    {
+      "episode": 9,
+      "seed": 9,
+      "success": 1,
+      "steps": 64,
+      "coverage_end": 0.49438202381134033,
+      "coverage_detected": 0.49438202381134033,
+      "collisions": 24
+    },
+    {
+      "episode": 10,
+      "seed": 10,
+      "success": 1,
+      "steps": 118,
+      "coverage_end": 0.932584285736084,
+      "coverage_detected": 0.932584285736084,
+      "collisions": 20
+    },
+    {
+      "episode": 11,
+      "seed": 11,
+      "success": 1,
+      "steps": 1,
+      "coverage_end": 0.11797752976417542,
+      "coverage_detected": 0.11797752976417542,
+      "collisions": 0
+    },
+    {
+      "episode": 12,
+      "seed": 12,
+      "success": 1,
+      "steps": 49,
+      "coverage_end": 0.601123571395874,
+      "coverage_detected": 0.601123571395874,
+      "collisions": 7
+    },
+    {
+      "episode": 13,
+      "seed": 13,
+      "success": 1,
+      "steps": 10,
+      "coverage_end": 0.2247191071510315,
+      "coverage_detected": 0.2247191071510315,
+      "collisions": 2
+    },
+    {
+      "episode": 14,
+      "seed": 14,
+      "success": 1,
+      "steps": 23,
+      "coverage_end": 0.49438202381134033,
+      "coverage_detected": 0.49438202381134033,
+      "collisions": 4
+    },
+    {
+      "episode": 15,
+      "seed": 15,
+      "success": 1,
+      "steps": 44,
+      "coverage_end": 0.42134830355644226,
+      "coverage_detected": 0.42134830355644226,
+      "collisions": 1
+    },
+    {
+      "episode": 16,
+      "seed": 16,
+      "success": 1,
+      "steps": 26,
+      "coverage_end": 0.3258427083492279,
+      "coverage_detected": 0.3258427083492279,
+      "collisions": 4
+    },
+    {
+      "episode": 17,
+      "seed": 17,
+      "success": 0,
+      "steps": 300,
+      "coverage_end": 0.18539325892925262,
+      "coverage_detected": null,
+      "collisions": 12
+    },
+    {
+      "episode": 18,
+      "seed": 18,
+      "success": 1,
+      "steps": 125,
+      "coverage_end": 0.915730357170105,
+      "coverage_detected": 0.915730357170105,
+      "collisions": 22
+    },
+    {
+      "episode": 19,
+      "seed": 19,
+      "success": 1,
+      "steps": 37,
+      "coverage_end": 0.5449438095092773,
+      "coverage_detected": 0.5449438095092773,
+      "collisions": 7
+    },
+    {
+      "episode": 20,
+      "seed": 20,
+      "success": 1,
+      "steps": 113,
+      "coverage_end": 0.8707864880561829,
+      "coverage_detected": 0.8707864880561829,
+      "collisions": 14
+    },
+    {
+      "episode": 21,
+      "seed": 21,
+      "success": 1,
+      "steps": 45,
+      "coverage_end": 0.5393258333206177,
+      "coverage_detected": 0.5393258333206177,
+      "collisions": 6
+    },
+    {
+      "episode": 22,
+      "seed": 22,
+      "success": 1,
+      "steps": 13,
+      "coverage_end": 0.32022473216056824,
+      "coverage_detected": 0.32022473216056824,
+      "collisions": 0
+    },
+    {
+      "episode": 23,
+      "seed": 23,
+      "success": 1,
+      "steps": 60,
+      "coverage_end": 0.8876404762268066,
+      "coverage_detected": 0.8876404762268066,
+      "collisions": 4
+    },
+    {
+      "episode": 24,
+      "seed": 24,
+      "success": 1,
+      "steps": 3,
+      "coverage_end": 0.1741573065519333,
+      "coverage_detected": 0.1741573065519333,
+      "collisions": 1
+    },
+    {
+      "episode": 25,
+      "seed": 25,
+      "success": 1,
+      "steps": 30,
+      "coverage_end": 0.47191011905670166,
+      "coverage_detected": 0.47191011905670166,
+      "collisions": 5
+    },
+    {
+      "episode": 26,
+      "seed": 26,
+      "success": 1,
+      "steps": 47,
+      "coverage_end": 0.6067415475845337,
+      "coverage_detected": 0.6067415475845337,
+      "collisions": 13
+    },
+    {
+      "episode": 27,
+      "seed": 27,
+      "success": 1,
+      "steps": 92,
+      "coverage_end": 0.9943820238113403,
+      "coverage_detected": 0.9943820238113403,
+      "collisions": 10
+    },
+    {
+      "episode": 28,
+      "seed": 28,
+      "success": 1,
+      "steps": 46,
+      "coverage_end": 0.3820224702358246,
+      "coverage_detected": 0.3820224702358246,
+      "collisions": 9
+    },
+    {
+      "episode": 29,
+      "seed": 29,
+      "success": 1,
+      "steps": 128,
+      "coverage_end": 0.9438202381134033,
+      "coverage_detected": 0.9438202381134033,
+      "collisions": 14
+    },
+    {
+      "episode": 30,
+      "seed": 30,
+      "success": 1,
+      "steps": 1,
+      "coverage_end": 0.1404494345188141,
+      "coverage_detected": 0.1404494345188141,
+      "collisions": 0
+    },
+    {
+      "episode": 31,
+      "seed": 31,
+      "success": 1,
+      "steps": 3,
+      "coverage_end": 0.15168538689613342,
+      "coverage_detected": 0.15168538689613342,
+      "collisions": 0
+    },
+    {
+      "episode": 32,
+      "seed": 32,
+      "success": 1,
+      "steps": 151,
+      "coverage_end": 0.8876404762268066,
+      "coverage_detected": 0.8876404762268066,
+      "collisions": 27
+    },
+    {
+      "episode": 33,
+      "seed": 33,
+      "success": 1,
+      "steps": 129,
+      "coverage_end": 0.9044944047927856,
+      "coverage_detected": 0.9044944047927856,
+      "collisions": 31
+    },
+    {
+      "episode": 34,
+      "seed": 34,
+      "success": 1,
+      "steps": 12,
+      "coverage_end": 0.24719101190567017,
+      "coverage_detected": 0.24719101190567017,
+      "collisions": 2
+    },
+    {
+      "episode": 35,
+      "seed": 35,
+      "success": 1,
+      "steps": 8,
+      "coverage_end": 0.26404494047164917,
+      "coverage_detected": 0.26404494047164917,
+      "collisions": 0
+    },
+    {
+      "episode": 36,
+      "seed": 36,
+      "success": 1,
+      "steps": 81,
+      "coverage_end": 0.6910112500190735,
+      "coverage_detected": 0.6910112500190735,
+      "collisions": 15
+    },
+    {
+      "episode": 37,
+      "seed": 37,
+      "success": 1,
+      "steps": 131,
+      "coverage_end": 0.9438202381134033,
+      "coverage_detected": 0.9438202381134033,
+      "collisions": 26
+    },
+    {
+      "episode": 38,
+      "seed": 38,
+      "success": 1,
+      "steps": 141,
+      "coverage_end": 0.9719101190567017,
+      "coverage_detected": 0.9719101190567017,
+      "collisions": 25
+    },
+    {
+      "episode": 39,
+      "seed": 39,
+      "success": 1,
+      "steps": 31,
+      "coverage_end": 0.3314606845378876,
+      "coverage_detected": 0.3314606845378876,
+      "collisions": 5
+    }
+  ]
+}

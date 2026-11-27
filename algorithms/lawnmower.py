@@ -16,6 +16,7 @@ UUVSearch - 梳形覆盖算法（全覆盖基线 / 上界）
 """
 import numpy as np
 from .base_algo import BaseAlgorithm
+from .nav import AStarNavigator
 
 
 class LawnmowerSearch(BaseAlgorithm):
@@ -35,12 +36,19 @@ class LawnmowerSearch(BaseAlgorithm):
         self.resolution = config.get("resolution", 30.0)
         self.map_length = config.get("map_length", 420.0)
 
+        self.nav = None
+        if self.map_obj is not None:
+            free = (self.map_obj.grid != 1).copy()
+            self.nav = AStarNavigator(free, self.action_angles, lookahead=2)
+
     def reset(self):
         self.current_target_idx = 0
         self.stuck_counter = 0
         self.last_pos = None
         self.random_steps_left = 0
         self.waypoints = []
+        if self.nav is not None:
+            self.nav.reset()
 
     def _generate_waypoints(self, map_obj):
         rows, cols = map_obj.grid.shape
@@ -153,13 +161,19 @@ class LawnmowerSearch(BaseAlgorithm):
             }
             return action_map.get((np.sign(dr), np.sign(dc)), 0)
         else:
-            # 连续模式：计算期望航向，选最接近的航向变化动作
+            # 连续模式：A* + pure pursuit 导航
             psi = self._get_heading(obs)
+            x_norm, y_norm = float(obs[-4]), float(obs[-3])
+            pos_f = (y_norm * self.map_length / self.resolution,
+                     x_norm * self.map_length / self.resolution)
+            if self.nav is not None:
+                a = self.nav.goto(pos_f, psi, target)
+                if a is not None:
+                    return int(a)
             target_r, target_c = target
             target_x = (target_c + 0.5) * self.resolution
             target_y = (target_r + 0.5) * self.resolution
 
-            x_norm, y_norm = float(obs[-4]), float(obs[-3])
             cur_x = x_norm * self.map_length
             cur_y = y_norm * self.map_length
 

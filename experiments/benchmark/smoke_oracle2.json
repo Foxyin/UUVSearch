@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "algo": "oracle_coverage",
+    "checkpoint": null,
+    "env_config": "config/env/continuous_square.yaml",
+    "episodes": 5,
+    "seed": 0,
+    "max_steps": 300,
+    "timestamp": "2026-11-27T22:35:45"
+  },
+  "summary": {
+    "algo": "oracle_coverage",
+    "episodes": 5,
+    "success_rate": 1.0,
+    "success_ci95": [
+      0.5655085052479191,
+      1.0
+    ],
+    "steps_mean": 59.8,
+    "steps_std": 73.79810295664787,
+    "steps_success_mean": 59.8,
+    "steps_success_std": 73.79810295664787,
+    "steps_success_median": 19.0,
+    "coverage_end_mean": 0.4685393303632736,
+    "coverage_detected_mean": 0.4685393303632736,
+    "collisions_mean": 12.6,
+    "wall_time_s": 0.2
+  },
+  "records": [
+    {
+      "episode": 0,
+      "seed": 0,
+      "success": 1,
+      "steps": 6,
+      "coverage_end": 0.16853933036327362,
+      "coverage_detected": 0.16853933036327362,
+      "collisions": 2
+    },
+    {
+      "episode": 1,
+      "seed": 1,
+      "success": 1,
+      "steps": 19,
+      "coverage_end": 0.2808988690376282,
+      "coverage_detected": 0.2808988690376282,
+      "collisions": 6
+    },
+    {
+      "episode": 2,
+      "seed": 2,
+      "success": 1,
+      "steps": 204,
+      "coverage_end": 0.9101123809814453,
+      "coverage_detected": 0.9101123809814453,
+      "collisions": 45
+    },
+    {
+      "episode": 3,
+      "seed": 3,
+      "success": 1,
+      "steps": 53,
+      "coverage_end": 0.6853932738304138,
+      "coverage_detected": 0.6853932738304138,
+      "collisions": 7
+    },
+    {
+      "episode": 4,
+      "seed": 4,
+      "success": 1,
+      "steps": 17,
+      "coverage_end": 0.2977527976036072,
+      "coverage_detected": 0.2977527976036072,
+      "collisions": 3
+    }
+  ]
+}

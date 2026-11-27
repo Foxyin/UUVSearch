@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "algo": "bayes_myopic",
+    "checkpoint": null,
+    "env_config": "config/env/continuous_square.yaml",
+    "episodes": 10,
+    "seed": 0,
+    "max_steps": 300,
+    "timestamp": "2026-11-27T22:32:56"
+  },
+  "summary": {
+    "algo": "bayes_myopic",
+    "episodes": 10,
+    "success_rate": 1.0,
+    "success_ci95": [
+      0.7224598312333834,
+      1.0
+    ],
+    "steps_mean": 65.7,
+    "steps_std": 38.897429220965236,
+    "steps_success_mean": 65.7,
+    "steps_success_std": 38.897429220965236,
+    "steps_success_median": 58.0,
+    "coverage_end_mean": 0.6938202232122421,
+    "coverage_detected_mean": 0.6938202232122421,
+    "collisions_mean": 15.8,
+    "wall_time_s": 0.7
+  },
+  "records": [
+    {
+      "episode": 0,
+      "seed": 0,
+      "success": 1,
+      "steps": 80,
+      "coverage_end": 0.8202247023582458,
+      "coverage_detected": 0.8202247023582458,
+      "collisions": 20
+    },
+    {
+      "episode": 1,
+      "seed": 1,
+      "success": 1,
+      "steps": 39,
+      "coverage_end": 0.3595505654811859,
+      "coverage_detected": 0.3595505654811859,
+      "collisions": 10
+    },
+    {
+      "episode": 2,
+      "seed": 2,
+      "success": 1,
+      "steps": 27,
+      "coverage_end": 0.6067415475845337,
+      "coverage_detected": 0.6067415475845337,
+      "collisions": 2
+    },
+    {
+      "episode": 3,
+      "seed": 3,
+      "success": 1,
+      "steps": 54,
+      "coverage_end": 0.8033707737922668,
+      "coverage_detected": 0.8033707737922668,
+      "collisions": 6
+    },
+    {
+      "episode": 4,
+      "seed": 4,
+      "success": 1,
+      "steps": 129,
+      "coverage_end": 0.9382022619247437,
+      "coverage_detected": 0.9382022619247437,
+      "collisions": 43
+    },
+    {
+      "episode": 5,
+      "seed": 5,
+      "success": 1,
+      "steps": 20,
+      "coverage_end": 0.2415730357170105,
+      "coverage_detected": 0.2415730357170105,
+      "collisions": 6
+    },
+    {
+      "episode": 6,
+      "seed": 6,
+      "success": 1,
+      "steps": 138,
+      "coverage_end": 0.9269663095474243,
+      "coverage_detected": 0.9269663095474243,
+      "collisions": 47
+    },
+    {
+      "episode": 7,
+      "seed": 7,
+      "success": 1,
+      "steps": 32,
+      "coverage_end": 0.6797752976417542,
+      "coverage_detected": 0.6797752976417542,
+      "collisions": 3
+    },
+    {
+      "episode": 8,
+      "seed": 8,
+      "success": 1,
+      "steps": 62,
+      "coverage_end": 0.8146067261695862,
+      "coverage_detected": 0.8146067261695862,
+      "collisions": 7
+    },
+    {
+      "episode": 9,
+      "seed": 9,
+      "success": 1,
+      "steps": 76,
+      "coverage_end": 0.7471910119056702,
+      "coverage_detected": 0.7471910119056702,
+      "collisions": 14
+    }
+  ]
+}

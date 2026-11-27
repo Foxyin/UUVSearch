@@ -5,11 +5,15 @@ from .base_algo import BaseAlgorithm
 from .random_search import RandomSearch
 from .lawnmower import LawnmowerSearch
 from .greedy_prob import GreedyProbSearch
+from .oracle_coverage import OracleCoverageSearch
+from .bayes_myopic import BayesMyopicSearch
 
 _ALGO_REGISTRY = {
     "random": RandomSearch,
     "lawnmower": LawnmowerSearch,
     "greedy_prob": GreedyProbSearch,
+    "oracle_coverage": OracleCoverageSearch,
+    "bayes_myopic": BayesMyopicSearch,
 }
 
 def create_algorithm(algo_name: str, config: dict = None) -> BaseAlgorithm:

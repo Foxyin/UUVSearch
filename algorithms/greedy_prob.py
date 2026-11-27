@@ -21,6 +21,7 @@ UUVSearch - 贪心概率搜索算法（信息驱动基线）
 """
 import numpy as np
 from .base_algo import BaseAlgorithm
+from .nav import AStarNavigator
 
 
 class GreedyProbSearch(BaseAlgorithm):
@@ -34,11 +35,17 @@ class GreedyProbSearch(BaseAlgorithm):
         self.stuck_counter = 0
         self.last_pos = None
         self.random_steps_left = 0
+        self.nav = None
+        if self.map_obj is not None:
+            free = (self.map_obj.grid != 1).copy()
+            self.nav = AStarNavigator(free, self.action_angles, lookahead=2)
 
     def reset(self):
         self.stuck_counter = 0
         self.last_pos = None
         self.random_steps_left = 0
+        if self.nav is not None:
+            self.nav.reset()
 
     def _get_grid_pos(self, obs):
         if isinstance(obs, dict):
@@ -108,6 +115,13 @@ class GreedyProbSearch(BaseAlgorithm):
                         and self.map_obj.is_free(tr, tc)):
                     target_r, target_c = tr, tc
                     break
+
+            if self.nav is not None:
+                pos_f = (y_norm * self.map_length / self.resolution,
+                         x_norm * self.map_length / self.resolution)
+                a = self.nav.goto(pos_f, psi, (target_r, target_c))
+                if a is not None:
+                    return int(a)
 
             target_x = (target_c + 0.5) * self.resolution
             target_y = (target_r + 0.5) * self.resolution
