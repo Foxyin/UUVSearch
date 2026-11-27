@@ -1,0 +1,75 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plain Article Preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --- Encoding ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% --- Page layout ---
+\usepackage[%
+    a4paper,
+    margin=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm,
+]{geometry}
+
+% --- Spacing ---
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Math ---
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools, bm}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\graphicspath{{figures/}{./}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[font=small]{subcaption}
+
+% --- Tables ---
+\usepackage{booktabs, tabularx, multirow, array, longtable}
+
+% --- Hyperlinks ---
+\usepackage[colorlinks=true,linkcolor=black,citecolor=blue,urlcolor=blue]{hyperref}
+
+% --- Algorithms ---
+\usepackage{algorithm, algorithmic}
+
+% --- Units ---
+\usepackage{siunitx}
+
+% --- Float ---
+\usepackage{float}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Color ---
+\usepackage[table]{xcolor}
+
+% --- Appendix ---
+\usepackage{appendix}
+
+% --- Headers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+
+% --- Theorem environments ---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% --- Custom commands ---
+\newcommand{\eg}{e.g.,}
+\newcommand{\ie}{i.e.,}
+\newcommand{\etal}{et al.}
+\newcommand{\etc}{etc.}
+\newcommand{\vs}{vs.}

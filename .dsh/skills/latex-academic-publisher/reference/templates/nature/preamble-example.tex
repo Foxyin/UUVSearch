@@ -1,0 +1,52 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Nature-style Preamble (approximation)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --- Encoding ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% --- Page layout (Nature style: single column, wide margins) ---
+\usepackage[%
+    a4paper,
+    margin=2.5cm,
+    top=2cm,
+    bottom=2cm,
+    headsep=0.5cm,
+]{geometry}
+
+% --- Math ---
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools, bm}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\graphicspath{{figures/}{./}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[font=small]{subcaption}
+
+% --- Tables ---
+\usepackage{booktabs, tabularx, multirow, array}
+
+% --- Hyperlinks ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    urlcolor=blue,
+}
+
+% --- Bibliography ---
+\usepackage[numbers,sort&compress]{natbib}
+
+% --- Units ---
+\usepackage{siunitx}
+
+% --- Float ---
+\usepackage{float}
+
+% --- Custom commands ---
+\newcommand{\eg}{e.g.,}
+\newcommand{\ie}{i.e.,}
+\newcommand{\etal}{et al.}

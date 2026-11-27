@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Elsevier Journal Template
+% Documentclass: elsarticle
+% Options: preprint, review, 1p, 3p, 5p, final
+% Compilation: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[preprint,12pt]{elsarticle}
+
+\input{preamble}
+\input{metadata}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Paper Title \tnoteref{t1}}
+\tnotetext{t1}{This is a footnote in the title.}
+
+\author[inst1]{First Author\corref{cor1}}
+\ead{first.author@university.edu}
+
+\author[inst2]{Second Author}
+\ead{second.author@another.edu}
+
+\author[inst1]{Third Author}
+\ead{third.author@university.edu}
+
+\cortext[cor1]{Corresponding author.}
+\address[inst1]{Department of Computer Science, University Name, City, Country}
+\address[inst2]{Department of Engineering, Another University, City, Country}
+
+\begin{abstract}
+This is the abstract of the paper. It summarizes the problem, proposed method,
+key results, and conclusions.
+\end{abstract}
+
+\begin{keyword}
+keyword1 \sep keyword2 \sep keyword3 \sep keyword4
+\end{keyword}
+
+\end{frontmatter}
+
+\input{sections/01-introduction}
+\input{sections/02-literature}
+\input{sections/03-methodology}
+\input{sections/04-results}
+\input{sections/05-discussion}
+\input{sections/06-conclusion}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+\end{document}

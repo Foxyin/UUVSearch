@@ -1,0 +1,45 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MDPI Journal Template
+% Documentclass: mdpi (article, book, proceedings)
+% Compilation: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[journal,english,submit,article]{mdpi}
+
+\input{preamble}
+
+% --- MDPI Metadata (use MDPI macros, NOT standard \title) ---
+\Title{Paper Title}
+\Author{First Author $^{1,\dagger}$, Second Author $^{2,\ddagger}$ and Third Author $^{1,*}$}
+\Affiliations{
+    $^{1}$ Department of Computer Science, University Name, City, Country\\
+    $^{2}$ Department of Engineering, Another University, City, Country\\
+    $^{\dagger}$ These authors contributed equally to this work.\\
+    $^{\ddagger}$ Current address: Institute Name, City, Country.\\
+    $^{*}$ Correspondence: author@university.edu; Tel.: +00-000-0000
+}
+\Abstract{%
+This is the abstract of the paper. It should be a single paragraph summarizing
+the problem, method, key results, and conclusions.
+}
+\Keywords{keyword1; keyword2; keyword3; keyword4}
+\JEL Classifications{}
+\Received{January 1, 2025}
+\Accepted{February 1, 2025}
+\Published{February 15, 2025}
+
+\begin{document}
+
+\input{sections/01-introduction}
+\input{sections/02-literature}
+\input{sections/03-methodology}
+\input{sections/04-results}
+\input{sections/05-discussion}
+\input{sections/06-conclusion}
+
+\vspace{6pt}
+
+\input{metadata}
+
+\bibliography{references}
+
+\end{document}

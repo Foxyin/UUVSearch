@@ -1,0 +1,57 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IEEE Preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --- Encoding & Language ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% --- Math ---
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools, bm}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\graphicspath{{figures/}{./}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[font=small]{subcaption}
+
+% --- Tables ---
+\usepackage{booktabs, tabularx, multirow, array}
+\usepackage{dcolumn}
+
+% --- Hyperlinks ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    pdfstartview=FitH,
+}
+
+% --- Algorithms ---
+\usepackage{algorithm, algorithmic}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Units ---
+\usepackage{siunitx}
+
+% --- Float ---
+\usepackage{float}
+
+% --- IEEE specific ---
+\usepackage[retainorgcmds]{IEEEtrantools}
+
+% --- Theorem environments ---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+
+% --- Custom commands ---
+\newcommand{\eg}{e.g.,}
+\newcommand{\ie}{i.e.,}
+\newcommand{\etal}{et al.}

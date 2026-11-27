@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Nature Portfolio Template
+% Documentclass: article (Nature uses proprietary class)
+% Compilation: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+\input{metadata}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/01-introduction}
+\input{sections/02-results}
+\input{sections/03-discussion}
+\input{sections/04-methods}
+\input{sections/05-conclusion}
+
+% --- Nature-specific sections ---
+\section*{Data Availability}
+Data supporting this study are available from... 
+
+\section*{Code Availability}
+The code used in this study is available at...
+
+\section*{Acknowledgements}
+This work was supported by...
+
+\section*{Author Contributions}
+F.A. and S.A. conceived the study. F.A. developed the methodology.
+S.A. performed the experiments. T.A. supervised the work.
+
+\section*{Competing Interests}
+The authors declare no competing interests.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

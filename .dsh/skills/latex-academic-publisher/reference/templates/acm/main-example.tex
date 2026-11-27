@@ -1,0 +1,66 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ACM Conference/Journal Template
+% Documentclass: acmart
+% Options: acmconf, journal, sigconf
+% Compilation: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[sigconf]{acmart}
+
+\input{preamble}
+\input{metadata}
+
+\begin{document}
+
+\title{Paper Title}
+
+\author{First Author}
+\affiliation{%
+  \institution{University Name}
+  \department{Department of Computer Science}
+  \city{City}
+  \state{State}
+  \postcode{00000}
+  \country{Country}
+}
+\email{first@university.edu}
+
+\author{Second Author}
+\affiliation{%
+  \institution{Another University}
+  \department{Department of Engineering}
+  \city{City}
+  \country{Country}
+}
+\email{second@another.edu}
+
+% --- Rights management ---
+\setcopyright{acmcopyright}
+\copyrightyear{2025}
+\acmYear{2025}
+\acmDOI{10.1145/0000000.0000000}
+\acmConference[Conference Name]{Conference Date}{City, Country}
+\acmBooktitle{Proceedings of ...}
+\acmPrice{15.00}
+
+\begin{abstract}
+This is the abstract of the paper.
+\end{abstract}
+
+\keywords{keyword1, keyword2, keyword3}
+
+\ccsdesc[500]{Computing methodologies~Machine learning}
+\ccsdesc[300]{Applied computing~Document analysis}
+
+\maketitle
+
+\input{sections/01-introduction}
+\input{sections/02-literature}
+\input{sections/03-methodology}
+\input{sections/04-results}
+\input{sections/05-discussion}
+\input{sections/06-conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

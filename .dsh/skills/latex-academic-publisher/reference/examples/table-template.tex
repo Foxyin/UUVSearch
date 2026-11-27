@@ -1,0 +1,52 @@
+% =============================================================================
+% Table templates
+% =============================================================================
+
+% --- Simple table with booktabs ---
+\begin{table}[t]
+    \centering
+    \caption{Table caption.}
+    \label{tab:example}
+    \begin{tabular}{lcccc}
+        \toprule
+        Dataset & Metric A & Metric B & Metric C & Metric D \\
+        \midrule
+        Dataset-1 & 95.2 & 89.7 & 91.5 & 93.0 \\
+        Dataset-2 & 93.8 & 88.1 & 90.2 & 91.4 \\
+        Dataset-3 & 96.1 & 90.3 & 92.8 & 94.2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% --- Table with multi-column and multi-row ---
+\begin{table}[t]
+    \centering
+    \caption{Comparison results across methods.}
+    \label{tab:comparison}
+    \begin{tabular}{lccc}
+        \toprule
+        \multirow{2}{*}{Method} & \multicolumn{2}{c}{Dataset A} & \multirow{2}{*}{Dataset B} \\
+        \cmidrule{2-3}
+        & Precision & Recall & Score \\
+        \midrule
+        Method-1 & 0.92 & 0.88 & 0.90 \\
+        Method-2 & 0.94 & 0.91 & 0.93 \\
+        Method-3 & \textbf{0.96} & \textbf{0.93} & \textbf{0.95} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% --- Table with tabularx (full-width) ---
+\begin{table}[t]
+    \centering
+    \caption{Wide table using tabularx.}
+    \label{tab:wide}
+    \begin{tabularx}{\columnwidth}{lXXXX}
+        \toprule
+        Model & Param-1 & Param-2 & Param-3 & Param-4 \\
+        \midrule
+        Model-A & 85.2 & 79.8 & 88.1 & 82.5 \\
+        Model-B & 87.6 & 82.3 & 90.4 & 85.7 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}

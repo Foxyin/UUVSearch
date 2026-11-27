@@ -1,0 +1,28 @@
+{
+  "name": "latex-academic-publisher",
+  "version": "1.0.0",
+  "description": "A Claude skill that transforms structured research content into publication-ready, compilable LaTeX documents with journal-specific formatting",
+  "main": "SKILL.md",
+  "keywords": [
+    "claude-skill",
+    "latex",
+    "academic-publishing",
+    "ieee",
+    "mdpi",
+    "elsevier",
+    "springer",
+    "acm",
+    "bibtex",
+    "overleaf"
+  ],
+  "author": "Nguyễn Trần Nhật An",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NguyenAn2812/latex-academic-publisher.git"
+  },
+  "files": [
+    "SKILL.md",
+    "reference/**/*"
+  ]
+}

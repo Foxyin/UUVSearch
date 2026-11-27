@@ -1,0 +1,59 @@
+% =============================================================================
+% Figure templates
+% =============================================================================
+
+% --- Single figure ---
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/figure-name}
+    \caption{Figure caption describing the content.}
+    \label{fig:label-name}
+\end{figure}
+
+% --- Two figures side by side (single column) ---
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/fig-a}
+        \caption{Description of A.}
+        \label{fig:a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/fig-b}
+        \caption{Description of B.}
+        \label{fig:b}
+    \end{subfigure}
+    \caption{Combined caption for both figures.}
+    \label{fig:two-panel}
+\end{figure}
+
+% --- Figure with subfigures in a grid (2x2) ---
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/grid-1}
+        \caption{First.}
+        \label{fig:g1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/grid-2}
+        \caption{Second.}
+        \label{fig:g2}
+    \end{subfigure}
+    \vskip\baselineskip
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/grid-3}
+        \caption{Third.}
+        \label{fig:g3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figures/grid-4}
+        \caption{Fourth.}
+        \label{fig:g4}
+    \end{subfigure}
+    \caption{Grid of four subfigures.}
+    \label{fig:grid}
+\end{figure}

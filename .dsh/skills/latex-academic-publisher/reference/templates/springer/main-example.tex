@@ -1,0 +1,29 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Springer Journal Template
+% Documentclass: svjour3
+% Options: smallextended, envcountsame
+% Compilation: pdflatex -> bibtex -> pdflatex -> pdflatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[smallextended]{svjour3}
+
+\input{preamble}
+\input{metadata}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/01-introduction}
+\input{sections/02-literature}
+\input{sections/03-methodology}
+\input{sections/04-results}
+\input{sections/05-discussion}
+\input{sections/06-conclusion}
+
+% --- Acknowledgements ---
+\acknowledgements{This work was supported by [Funding Agency] grant [XXXX].}
+
+\bibliographystyle{spmpsci}
+\bibliography{references}
+
+\end{document}
